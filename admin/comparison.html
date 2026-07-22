@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>التقارير الشهرية — REXO</title>
+<title>مقارنة التقارير — REXO</title>
 <style>:root{
     --bg:#06111f;--panel:#101f35;--panel2:#142944;--line:#28415f;
     --text:#f7fbff;--muted:#91b7da;--cyan:#22d3ee;--purple:#8b5cf6;
@@ -201,43 +201,75 @@
     <div class="viewer-brand">
       <div class="viewer-logo">REXO</div>
       <div class="viewer-title">
-        <h1>التقارير الشهرية</h1>
-        <p>نسخة تصفح فقط — صفحات مستقلة</p>
+        <h1>مقارنة التقارير</h1>
+        <p>اختر أي فترتين للمقارنة</p>
       </div>
     </div>
-    <nav class="viewer-nav"><a class="viewer-btn primary" href="comparison.html">فتح المقارنة</a></nav>
+    <nav class="viewer-nav"><a class="viewer-btn" href="index.html">الرئيسية</a><button class="viewer-btn" onclick="window.print()">حفظ PDF</button></nav>
   </header>
   <section class="viewer-hero">
-    <h2>جميع التقارير</h2>
-    <p>هذه نسخة تصفح ثابتة. اضغط على أي تقرير لفتحه في صفحة مستقلة، أو افتح صفحة المقارنة.</p>
+    <h2>مقارنة التقارير</h2>
+    <p>اختر أي تقريرين للمقارنة. هذه الصفحة للقراءة فقط.</p>
   </section>
-  <section class="viewer-stats">
-    <div class="viewer-stat"><small>عدد التقارير</small><strong>1</strong></div>
-    <div class="viewer-stat"><small>إجمالي المبلغ المنفق</small><strong>7,435.80 SAR</strong></div>
-    <div class="viewer-stat"><small>إجمالي المبيعات</small><strong>450</strong></div>
-    <div class="viewer-stat"><small>آخر تحديث</small><strong style="font-size:14px">22/07/2026, 15:05</strong></div>
-  </section>
-  <div class="viewer-section-title">
-    <div><h2>التقارير المحفوظة</h2><p>كل بطاقة رابط HTML عادي لا يعتمد على JavaScript.</p></div>
+  <div class="viewer-compare-controls">
+    <select id="compareA"><option value="0">تقرير شهر يوليو 2026 — من 1 يوليو 2026 إلى 31 يوليو 2026</option></select>
+    <select id="compareB"><option value="0">تقرير شهر يوليو 2026 — من 1 يوليو 2026 إلى 31 يوليو 2026</option></select>
+    <select id="compareCurrency"><option value="SAR">SAR</option><option value="USD">USD</option></select>
   </div>
-  <section class="viewer-reports"><a class="viewer-report-card" href="reports/r_mrw1251p_9tp8gd.html">
-      <div class="viewer-card-top">
-        <div>
-          <h3>تقرير شهر يوليو 2026</h3>
-          <div class="viewer-period">من 1 يوليو 2026 إلى 31 يوليو 2026</div>
-        </div>
-        <span class="viewer-badge">1 منتجات</span>
-      </div>
-      <div class="viewer-card-kpis">
-        <div class="viewer-card-kpi"><small>المنفق</small><strong>7,435.80 SAR</strong></div>
-        <div class="viewer-card-kpi"><small>المبيعات</small><strong>450</strong></div>
-        <div class="viewer-card-kpi"><small>ROAS</small><strong>2.04</strong></div>
-        <div class="viewer-card-kpi"><small>قيمة المبيعات</small><strong>15,202.57 SAR</strong></div>
-      </div>
-      <div class="viewer-open">فتح التقرير ←</div>
-    </a></section>
+  <section class="viewer-compare-grid" id="compareResult"></section>
   <footer class="viewer-footer">REXO • نسخة تصفح فقط • لا توجد أدوات تعديل</footer>
 </div>
-
+<script>const reports=[{"id":"r_mrw1251p_9tp8gd","name":"تقرير شهر يوليو 2026","periodStart":"2026-07-01","periodEnd":"2026-07-31","currency":"SAR","rate":3.75,"campaign":{"spendUsd":1982.88,"salesCount":450,"clicks":23000,"salesValueUsd":4054.0186666666664},"products":[{"id":"p_mrw1251p_y9wo39","name":"المنتج 1","campaign":"اسفنجه التنظيف السحريه","spendUsd":6,"salesCount":1,"clicks":33,"salesValueUsd":31.264,"notes":""}],"createdAt":1784721430285,"updatedAt":1784721908613}];
+  const numberFormat=(value,decimals=0)=>new Intl.NumberFormat('en-US',{
+    minimumFractionDigits:decimals,maximumFractionDigits:decimals
+  }).format(Number(value)||0);
+  const amount=(report,usd,currency)=>currency==='SAR'
+    ?(Number(usd)||0)*(Number(report.rate)||3.75)
+    :(Number(usd)||0);
+  const roas=report=>{
+    const spend=Number(report.campaign?.spendUsd)||0;
+    return spend>0?(Number(report.campaign?.salesValueUsd)||0)/spend:0;
+  };
+  const metrics=(report,currency)=>({
+    spend:amount(report,report.campaign?.spendUsd,currency),
+    sales:Number(report.campaign?.salesCount)||0,
+    clicks:Number(report.campaign?.clicks)||0,
+    roas:roas(report),
+    value:amount(report,report.campaign?.salesValueUsd,currency)
+  });
+  function renderComparison(){
+    const aIndex=Number(document.getElementById('compareA').value)||0;
+    let bIndex=Number(document.getElementById('compareB').value)||0;
+    const currency=document.getElementById('compareCurrency').value;
+    const reportA=reports[aIndex]||reports[0];
+    const reportB=reports[bIndex]||reports[0];
+    if(!reportA||!reportB)return;
+    const a=metrics(reportA,currency),b=metrics(reportB,currency);
+    const defs=[
+      ['spend','المبلغ المنفق',2,currency],
+      ['sales','عدد المبيعات',0,'Sales'],
+      ['clicks','النقرات',0,'Clicks'],
+      ['roas','ROAS',2,'ROAS'],
+      ['value','قيمة المبيعات',2,currency]
+    ];
+    document.getElementById('compareResult').innerHTML=defs.map(([key,label,decimals,unit])=>{
+      const av=Number(a[key])||0,bv=Number(b[key])||0,diff=bv-av;
+      const pct=av!==0?(diff/Math.abs(av))*100:null;
+      const cls=diff>0?'pos':diff<0?'neg':'';
+      const delta=(diff>0?'+':'')+numberFormat(diff,decimals)
+        +(pct===null?'':' ('+(pct>0?'+':'')+numberFormat(pct,1)+'%)');
+      return '<article class="viewer-compare-card">'
+        +'<small>'+label+'</small>'
+        +'<div class="viewer-pair">'
+        +'<div><small>'+reportA.name+'</small><strong>'+numberFormat(av,decimals)+'</strong></div>'
+        +'<div><small>'+reportB.name+'</small><strong>'+numberFormat(bv,decimals)+'</strong></div>'
+        +'</div><div class="viewer-delta '+cls+'">الفرق: '+delta+' '+unit+'</div></article>';
+    }).join('');
+  }
+  document.getElementById('compareA').addEventListener('change',renderComparison);
+  document.getElementById('compareB').addEventListener('change',renderComparison);
+  document.getElementById('compareCurrency').addEventListener('change',renderComparison);
+  if(reports.length>1)document.getElementById('compareB').value='1';
+  renderComparison();</script>
 </body>
 </html>
