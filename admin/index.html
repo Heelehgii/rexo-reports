@@ -1,0 +1,3873 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REXO | Campaign & Product Dashboard</title>
+<style>
+:root{
+  --bg:#07111f; --bg2:#0a1627; --panel:#0f1d31; --panel2:#14243b;
+  --text:#f8fafc; --muted:#93a4ba; --line:rgba(255,255,255,.10);
+  --purple:#8b5cf6; --cyan:#22d3ee; --green:#34d399;
+  --amber:#fbbf24; --red:#fb7185; --shadow:0 22px 65px rgba(0,0,0,.28);
+}
+body.light{
+  --bg:#eef3f8; --bg2:#f7f9fc; --panel:#ffffff; --panel2:#f5f7fb;
+  --text:#15243a; --muted:#64748b; --line:rgba(15,23,42,.10);
+  --shadow:0 18px 45px rgba(15,23,42,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--text);
+  font-family:Tahoma,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(139,92,246,.20),transparent 27%),
+    radial-gradient(circle at 5% 12%,rgba(34,211,238,.12),transparent 25%),
+    linear-gradient(180deg,var(--bg),var(--bg2));
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.shell{max-width:1600px;margin:auto;padding:24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{
+  min-width:86px;height:58px;padding:0 14px;border-radius:19px;display:grid;place-items:center;
+  font-size:18px;letter-spacing:.5px;font-weight:900;color:#fff;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  box-shadow:0 14px 35px rgba(139,92,246,.34)
+}
+h1{margin:0;font-size:24px}
+.subtitle{color:var(--muted);font-size:12px;margin-top:5px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{
+  border:1px solid var(--line);background:var(--panel);color:var(--text);
+  padding:10px 13px;border-radius:13px;transition:.18s ease
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--purple)}
+.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--cyan))}
+.btn.danger{color:var(--red)}
+
+.controls{
+  background:var(--panel);border:1px solid var(--line);border-radius:21px;
+  padding:15px;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:1.1fr 1fr 1.3fr;gap:13px;margin-bottom:16px
+}
+.control-box{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:13px}
+.control-label{font-size:11px;color:var(--muted);margin-bottom:9px}
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.segmented button{
+  border:1px solid var(--line);background:transparent;color:var(--text);
+  padding:10px;border-radius:12px
+}
+.segmented button.active{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--purple),var(--cyan))}
+.rate-row{display:flex;align-items:center;gap:8px}
+.rate-row input{
+  width:120px;border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  color:var(--text);padding:10px;outline:none;text-align:center;font-weight:800;
+  direction:ltr;font-variant-numeric:tabular-nums
+}
+.currency-note{font-size:12px;color:var(--muted);line-height:1.7}
+
+.summary-panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:24px;
+  box-shadow:var(--shadow);padding:16px;margin-bottom:18px
+}
+.summary-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:2px 2px 14px}
+.summary-head h2{margin:0;font-size:18px}
+.summary-head p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.manual-badge{
+  border:1px solid rgba(52,211,153,.30);color:var(--green);
+  background:rgba(52,211,153,.08);padding:7px 10px;border-radius:99px;font-size:11px
+}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:13px}
+.kpi{
+  position:relative;overflow:hidden;min-height:156px;border:1px solid var(--line);
+  border-radius:21px;padding:16px;background:linear-gradient(145deg,var(--panel),var(--panel2))
+}
+.kpi:before{
+  content:"";position:absolute;width:100px;height:100px;left:-35px;top:-38px;
+  border-radius:50%;filter:blur(38px);opacity:.25;
+  background:linear-gradient(135deg,var(--purple),var(--cyan))
+}
+.kpi-title{position:relative;color:var(--muted);font-size:12px}
+.kpi-input{
+  position:relative;width:100%;margin-top:23px;background:transparent;
+  border:0;border-bottom:1px dashed var(--line);color:var(--text);
+  font-size:26px;font-weight:900;outline:none;
+  direction:ltr;text-align:right;font-variant-numeric:tabular-nums
+}
+.kpi-foot{position:relative;color:var(--muted);font-size:11px;margin-top:10px}
+.readonly-value{
+  position:relative;font-size:28px;font-weight:900;margin-top:24px;
+  direction:ltr;text-align:right;font-variant-numeric:tabular-nums
+}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 12px}
+.section-head h2{margin:0;font-size:18px}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.products{display:grid;gap:18px}
+.product-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:25px;
+  box-shadow:var(--shadow);overflow:hidden
+}
+.product-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:15px 17px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(139,92,246,.07),rgba(34,211,238,.04))
+}
+.product-index{display:flex;align-items:center;gap:10px}
+.badge{
+  min-width:38px;height:38px;padding:0 10px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;font-weight:900;
+  direction:ltr;font-variant-numeric:tabular-nums
+}
+.product-head input{
+  min-width:240px;max-width:520px;width:36vw;border:0;border-bottom:1px dashed var(--line);
+  background:transparent;color:var(--text);font-size:17px;font-weight:800;padding:7px 4px;outline:none
+}
+.product-actions{display:flex;gap:7px}
+.icon-btn{
+  width:38px;height:38px;border-radius:12px;border:1px solid var(--line);
+  color:var(--text);background:var(--panel2)
+}
+.icon-btn:hover{border-color:var(--purple)}
+
+.product-body{
+  display:grid;grid-template-columns:minmax(500px,1.15fr) minmax(390px,1fr);
+  gap:16px;padding:17px
+}
+.graphic-panel{
+  border:1px solid var(--line);border-radius:21px;background:var(--panel2);padding:15px
+}
+.graphic-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}
+.graphic-title strong{font-size:14px}
+.graphic-title span{font-size:10px;color:var(--muted)}
+.gauges{display:grid;grid-template-columns:repeat(3,minmax(145px,1fr));gap:12px}
+.gauge-card{
+  border:1px solid var(--line);background:var(--panel);border-radius:18px;
+  padding:13px;display:grid;place-items:center;min-height:210px
+}
+.gauge-ring{
+  --accent:var(--purple);
+  width:132px;height:132px;
+  position:relative;display:grid;place-items:center;
+}
+.gauge-svg{
+  width:132px;height:132px;
+  transform:rotate(-90deg);
+  overflow:visible;
+}
+.gauge-track{
+  fill:none;
+  stroke:rgba(255,255,255,.10);
+  stroke-width:10;
+}
+.gauge-progress{
+  fill:none;
+  stroke:var(--accent);
+  stroke-width:10;
+  stroke-linecap:round;
+  stroke-dasharray:339.292;
+  stroke-dashoffset:339.292;
+  transition:stroke-dashoffset .35s ease, stroke .35s ease;
+}
+.gauge-center{
+  position:absolute;inset:14px;border-radius:50%;
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+}
+.gauge-content{position:absolute;z-index:2;width:82%;text-align:center}
+.gauge-label{font-size:10px;color:var(--muted);margin-bottom:7px}
+.gauge-input{
+  width:100%;border:0;background:transparent;color:var(--text);
+  font-size:18px;font-weight:900;text-align:center;outline:none;
+  direction:ltr;font-variant-numeric:tabular-nums
+}
+.gauge-value{
+  font-size:20px;font-weight:900;text-align:center;direction:ltr;
+  font-variant-numeric:tabular-nums
+}
+.gauge-unit{font-size:9px;color:var(--muted);margin-top:5px}
+.gauge-mini-percent{
+  font-size:9px;color:var(--muted);margin-top:4px;direction:ltr;
+  font-variant-numeric:tabular-nums
+}
+.gauge-percent{
+  margin-top:10px;font-size:10px;color:var(--muted);direction:ltr;
+  font-variant-numeric:tabular-nums
+}
+.gauge-bar{
+  width:100%;height:7px;border-radius:99px;overflow:hidden;
+  background:rgba(255,255,255,.08);margin-top:8px
+}
+.gauge-bar > span{
+  display:block;height:100%;width:0;border-radius:inherit;
+  background:var(--accent,var(--purple));transition:width .28s ease
+}
+.details-box{
+  margin-top:13px;border:1px solid var(--line);border-radius:18px;
+  background:var(--panel2);padding:13px
+}
+.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.field{display:grid;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;color:var(--muted)}
+.field input,.field textarea{
+  width:100%;border:1px solid var(--line);border-radius:12px;background:var(--panel);
+  color:var(--text);padding:11px;outline:none
+}
+.field input:focus,.field textarea:focus{border-color:var(--purple)}
+.field textarea{min-height:65px;resize:vertical}
+
+.media-box{
+  min-height:560px;border:1px solid var(--line);border-radius:20px;
+  overflow:hidden;background:
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)),
+    var(--panel2);
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.media-drop{
+  position:relative;z-index:1;
+  min-height:560px;display:grid;place-items:center;text-align:center;padding:25px;
+  width:100%;
+  border:2px dashed transparent;transition:.18s
+}
+.media-drop.drag{border-color:var(--cyan);background:rgba(34,211,238,.05)}
+.drop-icon{
+  width:66px;height:66px;border-radius:21px;display:grid;place-items:center;
+  margin:0 auto 13px;font-size:28px;
+  background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(34,211,238,.16))
+}
+.drop-title{font-size:17px;font-weight:900}
+.drop-sub{font-size:12px;color:var(--muted);margin:7px 0 15px;line-height:1.8}
+.file-input{display:none}
+.preview-wrap{
+  position:absolute;inset:0;background:#05070b;display:none;z-index:5;
+  padding:12px;gap:10px;
+  grid-template-rows:minmax(0,1fr) auto;
+}
+.preview-media{
+  min-width:0;min-height:0;width:100%;height:100%;
+  overflow:hidden;display:grid;place-items:center;
+  background:#05070b;border-radius:12px;
+}
+.preview-wrap img,.preview-wrap video{
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center;
+  background:#05070b;
+  border-radius:12px;
+}
+.preview-actions{
+  position:static;display:flex;justify-content:center;gap:8px;
+  padding:9px;border-radius:14px;background:rgba(255,255,255,.08);
+  backdrop-filter:blur(10px)
+}
+.preview-actions button{
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);
+  color:#fff;padding:8px 11px;border-radius:10px
+}
+.media-type{
+  position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);
+  color:#fff;padding:7px 10px;border-radius:99px;font-size:11px
+}
+.media-status{
+  position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);
+  color:#fff;padding:7px 10px;border-radius:99px;font-size:10px
+}
+
+.footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+.toast{
+  position:fixed;left:22px;bottom:22px;z-index:100;background:var(--panel);
+  border:1px solid var(--line);color:var(--text);padding:12px 15px;border-radius:13px;
+  box-shadow:var(--shadow);opacity:0;transform:translateY(12px);pointer-events:none;transition:.22s
+}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1250px){
+  .product-body{grid-template-columns:1fr}
+  .media-box,.media-drop{min-height:430px}
+}
+@media(max-width:1000px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .controls{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .shell{padding:14px}
+  .topbar{align-items:flex-start;flex-direction:column}
+  .controls,.kpis{grid-template-columns:1fr}
+  .gauges{grid-template-columns:1fr 1fr}
+  .details-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .product-head{align-items:flex-start;flex-direction:column}
+  .product-head input{width:100%;min-width:0}
+  .product-actions{width:100%;justify-content:flex-end}
+}
+@media(max-width:480px){.gauges{grid-template-columns:1fr}}
+
+.report-manager{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:15px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.report-manager-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.report-select-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:min(100%,460px);
+  flex:1;
+}
+.report-label{
+  color:var(--muted);
+  font-size:11px;
+  white-space:nowrap;
+}
+.report-select{
+  width:100%;
+  min-width:220px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--panel2);
+  color:var(--text);
+  padding:11px 13px;
+  outline:none;
+  font-weight:800;
+}
+.report-buttons{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.report-meta{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:11px;
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.compare-panel{
+  display:none;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.compare-panel.open{display:block}
+.compare-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.compare-top h2{margin:0;font-size:18px}
+.compare-top p{margin:4px 0 0;color:var(--muted);font-size:11px}
+.compare-selectors{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.compare-selectors select{
+  min-width:190px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--panel2);
+  color:var(--text);
+  padding:10px;
+  outline:none;
+}
+.compare-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(170px,1fr));
+  gap:12px;
+}
+.compare-card{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+}
+.compare-metric{color:var(--muted);font-size:11px;margin-bottom:12px}
+.compare-values{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.compare-side{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:9px;
+  background:rgba(255,255,255,.025);
+}
+.compare-side small{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.compare-side strong{
+  display:block;
+  margin-top:5px;
+  direction:ltr;
+  text-align:right;
+  font-size:16px;
+  font-variant-numeric:tabular-nums;
+}
+.compare-bars{display:grid;gap:6px;margin-top:10px}
+.compare-bar{
+  height:7px;border-radius:99px;background:rgba(255,255,255,.08);
+  overflow:hidden;
+}
+.compare-bar span{
+  display:block;height:100%;border-radius:inherit;
+  transition:width .3s ease;
+}
+.compare-bar.a span{background:var(--purple)}
+.compare-bar.b span{background:var(--cyan)}
+.compare-delta{
+  margin-top:10px;
+  font-size:10px;
+  direction:ltr;
+  text-align:center;
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.compare-delta.positive{color:var(--green)}
+.compare-delta.negative{color:var(--red)}
+.compare-empty{
+  color:var(--muted);
+  text-align:center;
+  padding:25px;
+  border:1px dashed var(--line);
+  border-radius:15px;
+}
+@media(max-width:1100px){
+  .compare-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .report-select-wrap{align-items:stretch;flex-direction:column}
+  .report-buttons{width:100%}
+  .report-buttons .btn{flex:1}
+  .compare-grid{grid-template-columns:1fr}
+  .compare-selectors{width:100%}
+  .compare-selectors select{width:100%}
+}
+
+
+.app-view{display:none}
+.app-view.active{display:block}
+.page-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;margin-bottom:16px
+}
+.page-header h2{margin:0;font-size:24px}
+.page-header p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.8}
+.home-hero{
+  position:relative;overflow:hidden;
+  padding:24px;border:1px solid var(--line);border-radius:26px;
+  background:
+    radial-gradient(circle at 92% 5%,rgba(139,92,246,.26),transparent 35%),
+    radial-gradient(circle at 3% 100%,rgba(34,211,238,.14),transparent 34%),
+    linear-gradient(145deg,var(--panel2),var(--panel));
+  box-shadow:var(--shadow);margin-bottom:16px
+}
+.home-hero::after{
+  content:"";position:absolute;width:220px;height:220px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.05);left:-75px;top:-105px
+}
+.home-hero-content{
+  position:relative;z-index:1;display:flex;align-items:center;
+  justify-content:space-between;gap:18px;flex-wrap:wrap
+}
+.home-hero h2{margin:0;font-size:28px}
+.home-hero p{margin:8px 0 0;color:var(--muted);line-height:1.9;font-size:12px;max-width:750px}
+.home-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px
+}
+.home-stat{
+  border:1px solid var(--line);border-radius:18px;padding:15px;
+  background:linear-gradient(145deg,var(--panel2),var(--panel))
+}
+.home-stat small{display:block;color:var(--muted);font-size:10px}
+.home-stat strong{
+  display:block;margin-top:8px;font-size:23px;direction:ltr;
+  text-align:right;font-variant-numeric:tabular-nums
+}
+.reports-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px
+}
+.month-report-card{
+  border:1px solid var(--line);border-radius:22px;padding:17px;
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+  box-shadow:0 12px 30px rgba(0,0,0,.13);
+  cursor:pointer;transition:.18s ease;position:relative;overflow:hidden
+}
+.month-report-card:hover{transform:translateY(-3px);border-color:rgba(139,92,246,.55)}
+.month-report-card::before{
+  content:"";position:absolute;inset:0 auto 0 0;width:4px;
+  background:linear-gradient(180deg,var(--purple),var(--cyan))
+}
+.month-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.month-card-title{margin:0;font-size:18px}
+.month-card-period{margin-top:6px;color:var(--muted);font-size:11px;direction:ltr;text-align:right}
+.month-card-badge{
+  border:1px solid rgba(34,211,238,.25);background:rgba(34,211,238,.08);
+  color:var(--cyan);border-radius:99px;padding:5px 9px;font-size:9px;white-space:nowrap
+}
+.month-kpis{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:15px
+}
+.month-kpi{
+  border:1px solid var(--line);border-radius:13px;padding:10px;
+  background:rgba(255,255,255,.025)
+}
+.month-kpi small{display:block;color:var(--muted);font-size:9px}
+.month-kpi strong{
+  display:block;margin-top:5px;direction:ltr;text-align:right;
+  font-size:15px;font-variant-numeric:tabular-nums
+}
+.month-card-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--line)
+}
+.month-card-updated{color:var(--muted);font-size:9px}
+.month-card-actions{display:flex;gap:5px;flex-wrap:wrap}
+.mini-btn{
+  border:1px solid var(--line);background:rgba(255,255,255,.035);
+  color:var(--text);padding:6px 8px;border-radius:9px;font:inherit;
+  font-size:9px;cursor:pointer
+}
+.mini-btn:hover{border-color:rgba(139,92,246,.6)}
+.mini-btn.danger:hover{border-color:rgba(251,113,133,.7);color:var(--red)}
+.empty-reports{
+  grid-column:1/-1;padding:46px 20px;text-align:center;
+  border:1px dashed var(--line);border-radius:22px;color:var(--muted)
+}
+.report-page-heading{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:14px
+}
+.report-page-heading h2{margin:0;font-size:22px}
+.report-period-line{margin-top:5px;color:var(--muted);font-size:11px;direction:ltr;text-align:right}
+.back-home{
+  display:inline-flex;align-items:center;gap:7px
+}
+.comparison-page{
+  border:1px solid var(--line);border-radius:24px;padding:18px;
+  background:var(--panel);box-shadow:var(--shadow)
+}
+.comparison-page .compare-panel{display:block;margin:0;box-shadow:none;border:0;padding:0}
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.72);
+  display:none;align-items:center;justify-content:center;padding:18px;
+  backdrop-filter:blur(8px)
+}
+.modal-overlay.open{display:flex}
+.modal-card{
+  width:min(540px,100%);border:1px solid var(--line);border-radius:24px;
+  background:var(--panel);box-shadow:0 25px 80px rgba(0,0,0,.45);padding:20px
+}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-head h3{margin:0;font-size:20px}
+.modal-head p{margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.7}
+.modal-close{
+  width:34px;height:34px;border:1px solid var(--line);border-radius:10px;
+  background:transparent;color:var(--text);cursor:pointer;font-size:17px
+}
+.modal-fields{display:grid;gap:13px;margin-top:18px}
+.modal-field label{display:block;color:var(--muted);font-size:10px;margin-bottom:6px}
+.modal-field input{
+  width:100%;border:1px solid var(--line);border-radius:13px;
+  background:var(--panel2);color:var(--text);padding:12px 13px;
+  font:inherit;outline:none
+}
+.modal-field input:focus{border-color:rgba(139,92,246,.7)}
+.date-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;justify-content:flex-start;gap:8px;margin-top:18px;flex-wrap:wrap}
+.report-manager{margin-top:0}
+#reportToolbar{display:none}
+@media(max-width:1050px){
+  .reports-grid{grid-template-columns:repeat(2,1fr)}
+  .home-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .reports-grid{grid-template-columns:1fr}
+  .home-stats{grid-template-columns:1fr 1fr}
+  .date-fields{grid-template-columns:1fr}
+  .home-hero h2{font-size:23px}
+}
+
+
+.video-help{
+  margin-top:10px;color:var(--muted);font-size:10px;line-height:1.7;
+}
+.video-fallback{
+  width:100%;height:100%;min-height:240px;display:flex;align-items:center;
+  justify-content:center;text-align:center;padding:20px;border:1px dashed var(--line);
+  border-radius:14px;background:rgba(255,255,255,.025)
+}
+.video-fallback strong{display:block;color:var(--red);font-size:15px;margin-bottom:8px}
+.video-fallback p{margin:0;color:var(--muted);font-size:11px;line-height:1.8}
+.video-fallback-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:13px}
+.preview-wrap video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+
+.conversion-status{
+  width:min(520px,92%);padding:22px;border:1px solid rgba(34,211,238,.28);
+  border-radius:18px;background:rgba(34,211,238,.055);text-align:center
+}
+.conversion-status strong{display:block;color:var(--cyan);font-size:16px;margin-bottom:9px}
+.conversion-status p{margin:0;color:var(--muted);font-size:11px;line-height:1.8}
+.conversion-spinner{
+  width:42px;height:42px;margin:0 auto 14px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.10);border-top-color:var(--cyan);
+  animation:rexoSpin .9s linear infinite
+}
+@keyframes rexoSpin{to{transform:rotate(360deg)}}
+.conversion-progress{
+  margin-top:13px;height:8px;border-radius:99px;overflow:hidden;
+  background:rgba(255,255,255,.08)
+}
+.conversion-progress span{
+  display:block;width:35%;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,var(--purple),var(--cyan));
+  animation:rexoProgress 1.6s ease-in-out infinite
+}
+@keyframes rexoProgress{
+  0%{transform:translateX(-120%)}
+  100%{transform:translateX(320%)}
+}
+
+
+.home-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.portable-note{
+  margin-top:10px;color:var(--muted);font-size:10px;line-height:1.7
+}
+.portable-progress{
+  position:fixed;inset:0;z-index:1300;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(0,0,0,.78);backdrop-filter:blur(9px)
+}
+.portable-progress.open{display:flex}
+.portable-progress-card{
+  width:min(520px,100%);padding:24px;border-radius:22px;
+  border:1px solid var(--line);background:var(--panel);
+  box-shadow:0 28px 90px rgba(0,0,0,.55);text-align:center
+}
+.portable-progress-card h3{margin:0 0 8px;font-size:20px}
+.portable-progress-card p{margin:0;color:var(--muted);font-size:11px;line-height:1.8}
+.portable-progress-bar{
+  height:9px;border-radius:99px;background:rgba(255,255,255,.08);
+  overflow:hidden;margin-top:18px
+}
+.portable-progress-bar span{
+  display:block;height:100%;width:10%;border-radius:inherit;
+  background:linear-gradient(90deg,var(--purple),var(--cyan));
+  transition:width .25s ease
+}
+@media(max-width:650px){
+  .home-actions{width:100%}
+  .home-actions .btn{flex:1}
+}
+
+
+.readonly-banner{
+  display:none;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;margin-bottom:14px;padding:12px 15px;border-radius:16px;
+  border:1px solid rgba(34,211,238,.30);
+  background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(139,92,246,.08));
+}
+.readonly-banner strong{display:block;font-size:13px}
+.readonly-banner span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.readonly-mode .readonly-banner{display:flex}
+.readonly-mode .edit-only,
+.readonly-mode .product-actions,
+.readonly-mode .media-drop,
+.readonly-mode .file-input{
+  display:none !important;
+}
+.readonly-mode input:not([type="date"]),
+.readonly-mode textarea{
+  cursor:default !important;
+  caret-color:transparent !important;
+  user-select:text;
+}
+.readonly-mode input[readonly],
+.readonly-mode textarea[readonly],
+.readonly-mode select:disabled{
+  opacity:1 !important;
+  color:var(--text) !important;
+  -webkit-text-fill-color:var(--text) !important;
+  background:rgba(255,255,255,.025) !important;
+  border-color:rgba(255,255,255,.06) !important;
+  box-shadow:none !important;
+}
+.readonly-mode .gauge-input{
+  pointer-events:none;
+}
+.readonly-mode .preview-actions .edit-only{
+  display:none !important;
+}
+.readonly-mode .report-manager-row{
+  align-items:flex-start;
+}
+.readonly-mode .report-select{
+  pointer-events:auto;
+}
+.readonly-mode .control-box{
+  pointer-events:none;
+}
+.readonly-mode .comparison-page,
+.readonly-mode #comparisonView{
+  pointer-events:auto;
+}
+.readonly-mode #compareA,
+.readonly-mode #compareB,
+.readonly-mode #compareCurrency{
+  pointer-events:auto;
+}
+.readonly-lock{
+  display:none;
+  align-items:center;
+  padding:8px 11px;
+  border-radius:11px;
+  border:1px solid rgba(251,113,133,.30);
+  color:var(--red);
+  background:rgba(251,113,133,.07);
+  font-size:10px;
+  font-weight:800;
+}
+.readonly-mode .readonly-lock{display:inline-flex}
+
+.readonly-mode #homeView,
+.readonly-mode #reportCards,
+.readonly-mode .reports-grid,
+.readonly-mode .month-report-card{
+  pointer-events:auto !important;
+}
+.readonly-mode .month-report-card{
+  cursor:pointer !important;
+}
+.open-report-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:6px;border:1px solid rgba(34,211,238,.30);
+  color:var(--cyan);background:rgba(34,211,238,.07);
+  border-radius:10px;padding:7px 10px;font:inherit;font-size:10px;
+  font-weight:800;cursor:pointer
+}
+.open-report-btn:hover{
+  border-color:rgba(34,211,238,.65);
+  background:rgba(34,211,238,.12)
+}
+
+
+.month-report-card::after{
+  content:"فتح التقرير";
+  position:absolute;left:18px;top:18px;
+  padding:6px 10px;border-radius:9px;
+  border:1px solid rgba(34,211,238,.24);
+  color:var(--cyan);background:rgba(5,12,25,.62);
+  font-size:9px;font-weight:800;pointer-events:none;
+}
+
+
+/* عرض الصورة كاملة بارتفاعها الطبيعي */
+.media-box.image-loaded{
+  min-height:0;
+  height:auto;
+  overflow:visible;
+}
+.media-box.image-loaded .media-drop{
+  display:none !important;
+}
+.preview-wrap.image-mode{
+  position:relative;
+  inset:auto;
+  width:100%;
+  min-height:0;
+  height:auto;
+  padding:12px;
+  grid-template-rows:auto auto;
+  overflow:visible;
+}
+.preview-wrap.image-mode .preview-media{
+  width:100%;
+  min-height:0;
+  height:auto;
+  overflow:visible;
+  display:block;
+  text-align:center;
+}
+.preview-wrap.image-mode img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-width:100%;
+  max-height:none;
+  margin:0 auto;
+  object-fit:contain;
+  object-position:center;
+}
+.preview-wrap.video-mode{
+  position:absolute;
+  inset:0;
+}
+@media(max-width:1250px){
+  .media-box.image-loaded{
+    min-height:0 !important;
+  }
+}
+
+@media print{
+  .readonly-banner{display:none !important}
+}
+
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:8mm;
+  }
+  *{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+    color-adjust:exact !important;
+  }
+  html,body{
+    background:var(--bg) !important;
+    color:var(--text) !important;
+  }
+  body{
+    background:
+      radial-gradient(circle at 92% 0%,rgba(139,92,246,.20),transparent 27%),
+      radial-gradient(circle at 5% 12%,rgba(34,211,238,.12),transparent 25%),
+      linear-gradient(180deg,var(--bg),var(--bg2)) !important;
+  }
+  .shell{
+    max-width:none;
+    padding:0;
+  }
+  .toolbar,.controls,.product-actions,.preview-actions,.section-head .btn,.report-buttons,.compare-selectors{
+    display:none !important;
+  }
+  .topbar,.summary-panel,.product-card,.kpi,.graphic-panel,
+  .gauge-card,.details-box,.media-box,.control-box{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+  .summary-panel,.product-card{
+    break-inside:avoid;
+    page-break-inside:avoid;
+    box-shadow:none;
+  }
+  .product-card{
+    margin-bottom:10mm;
+  }
+  .kpi,.gauge-card,.graphic-panel,.details-box,.media-box{
+    background:var(--panel) !important;
+    border-color:var(--line) !important;
+    color:var(--text) !important;
+  }
+  .gauge-center{
+    background:var(--panel) !important;
+  }
+  .preview-wrap{
+    background:#05070b !important;
+  }
+  .preview-wrap img,.preview-wrap video{
+    background:#05070b !important;
+  }
+  .product-body{
+    grid-template-columns:1.15fr 1fr;
+  }
+  .media-box{
+    min-height:420px;
+  }
+  .media-drop{
+    min-height:420px;
+  }
+  a{
+    color:inherit !important;
+    text-decoration:none !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">REXO</div>
+      <div>
+        <h1 id="pageTitle">التقارير الشهرية</h1>
+        <div class="subtitle" id="pageSubtitle">صفحة رئيسية لكل التقارير الشهرية المستقلة • REXO</div>
+      </div>
+    </div>
+    <div class="toolbar" id="reportToolbar">
+      <button class="btn" onclick="navigateHome()">⌂ الرئيسية</button>
+      <button class="btn" onclick="navigateComparison()">مقارنة التقارير</button>
+      <button class="btn" onclick="toggleTheme()">تغيير المظهر</button>
+      <button class="btn edit-only" onclick="exportCSV()">تصدير CSV</button>
+      <button class="btn edit-only" onclick="exportPortableSite('editable')">تصدير حزمة كاملة</button>
+      <button class="btn edit-only" onclick="exportPortableSite('readonly')">تصدير موقع تصفح ثابت</button>
+      <button class="btn edit-only" onclick="document.getElementById('portableImportInput').click()">استيراد نسخة</button>
+      <button class="btn" onclick="printColoredPDF()">حفظ PDF ملون</button>
+      <button class="btn danger edit-only" onclick="resetAll()">تفريغ التقرير</button>
+      <button class="btn primary edit-only" onclick="addProduct()">＋ إضافة منتج</button>
+    </div>
+  </header>
+
+  <div class="readonly-banner" id="readonlyBanner">
+    <div>
+      <strong>نسخة تصفح فقط</strong>
+      <span>يمكنك تصفح جميع التقارير والمقارنات وتشغيل الوسائط وحفظ PDF، ولا يمكن تعديل أي بيانات.</span>
+    </div>
+    <span class="readonly-lock" id="unlockEditButton">التعديل غير متاح في هذه النسخة</span>
+  </div>
+
+
+  <section class="app-view active" id="homeView">
+    <div class="home-hero">
+      <div class="home-hero-content">
+        <div>
+          <h2>التقارير الشهرية</h2>
+          <p>أنشئ تقريرًا مستقلًا لشهر يوليو أو أغسطس أو لأي فترة تحددها. كل تقرير يحتفظ بإجمالي الحملة والمنتجات والصور والفيديوهات بصورة مستقلة.<br><span class="portable-note">يمكنك تصدير حزمة كاملة قابلة للتعديل، أو موقع تصفح ثابت بصفحة مستقلة لكل تقرير.</span></p>
+        </div>
+        <div class="home-actions">
+          <button class="btn primary edit-only" onclick="openReportModal('new')">＋ إضافة تقرير جديد</button>
+          <button class="btn edit-only" onclick="exportPortableSite('editable')">تصدير حزمة كاملة</button>
+          <button class="btn edit-only" onclick="exportPortableSite('readonly')">تصدير موقع تصفح ثابت</button>
+          <button class="btn edit-only" onclick="document.getElementById('portableImportInput').click()">استيراد نسخة</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-stats">
+      <div class="home-stat"><small>عدد التقارير</small><strong id="homeReportsCount">0</strong></div>
+      <div class="home-stat"><small>إجمالي المبلغ المنفق</small><strong id="homeTotalSpend">0.00 SAR</strong></div>
+      <div class="home-stat"><small>إجمالي المبيعات</small><strong id="homeSalesCount">0</strong></div>
+      <div class="home-stat"><small>آخر تحديث</small><strong id="homeLatestUpdate" style="font-size:14px">—</strong></div>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <h2>كل التقارير</h2>
+        <p>اضغط على أي بطاقة لفتح التقرير كصفحة كاملة، أو استخدم أزرار المقارنة والنسخ والتعديل.</p>
+      </div>
+      <button class="btn" onclick="navigateComparison()">فتح صفحة المقارنة</button>
+    </div>
+    <section class="reports-grid" id="reportCards"></section>
+  </section>
+
+  <section class="app-view" id="comparisonView">
+    <div class="page-header">
+      <div>
+        <h2>مقارنة التقارير والفترات</h2>
+        <p>اختر تقريرين مثل يوليو وأغسطس، أو الفترة من 1 إلى 15 مقابل فترة أخرى.</p>
+      </div>
+      <button class="btn back-home" onclick="navigateHome()">⌂ الرجوع للرئيسية</button>
+    </div>
+    <div class="comparison-page">
+      <section class="compare-panel open" id="comparePanel">
+        <div class="compare-top">
+          <div>
+            <h2>المقارنة</h2>
+            <p>تظهر الفروقات في إجمالي الحملة، مع الاحتفاظ بكل تقرير مستقلًا.</p>
+          </div>
+          <div class="compare-selectors">
+            <select id="compareA" onchange="renderComparison()"></select>
+            <span>مقابل</span>
+            <select id="compareB" onchange="renderComparison()"></select>
+            <select id="compareCurrency" onchange="renderComparison()">
+              <option value="SAR">SAR</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
+        <div id="comparisonContent"></div>
+      </section>
+    </div>
+  </section>
+
+  <div class="app-view" id="reportView">
+    <div class="report-page-heading">
+      <div>
+        <h2 id="activeReportHeading">التقرير</h2>
+        <div class="report-period-line" id="activeReportPeriod"></div>
+      </div>
+      <button class="btn back-home" onclick="navigateHome()">⌂ كل التقارير</button>
+    </div>
+
+    <section class="report-manager">
+      <div class="report-manager-row">
+        <div class="report-select-wrap">
+          <span class="report-label">التقرير المفتوح</span>
+          <select class="report-select" id="reportSelect" onchange="navigateReport(this.value)"></select>
+        </div>
+        <div class="report-buttons">
+          <button class="btn primary edit-only" onclick="openReportModal('new')">＋ تقرير جديد</button>
+          <button class="btn edit-only" onclick="duplicateReport()">نسخ التقرير</button>
+          <button class="btn edit-only" onclick="openReportModal('edit',workspace.activeReportId)">تعديل الاسم والفترة</button>
+          <button class="btn" onclick="navigateComparison(workspace.activeReportId)">مقارنة</button>
+          <button class="btn danger edit-only" onclick="deleteReport()">حذف التقرير</button>
+        </div>
+      </div>
+      <div class="report-meta">
+        <span id="reportCountText"></span>
+        <span id="reportUpdatedText"></span>
+        <span>كل تقرير محفوظ بشكل مستقل مع منتجاته ووسائطه.</span>
+      </div>
+    </section>
+
+<section class="controls">
+    <div class="control-box">
+      <div class="control-label">العملة المعروضة</div>
+      <div class="segmented">
+        <button id="sarBtn" onclick="setCurrency('SAR')">ريال سعودي</button>
+        <button id="usdBtn" onclick="setCurrency('USD')">دولار أمريكي</button>
+      </div>
+    </div>
+    <div class="control-box">
+      <div class="control-label">سعر الصرف</div>
+      <div class="rate-row">
+        <span class="currency-note">1 USD =</span>
+        <input id="rateInput" lang="en" inputmode="decimal" type="text" oninput="englishOnly(this);changeRate(this.value)">
+        <span class="currency-note">SAR</span>
+      </div>
+    </div>
+    <div class="control-box">
+      <div class="control-label">طريقة المؤشرات</div>
+      <div class="currency-note">العدادات الرسومية لكل منتج تتحرك فورًا حسب الرقم المدخل. إذا كان إجمالي الحملة موجودًا تقارن به، وإذا لم يكن موجودًا تستخدم مقياسًا ذكيًا تلقائيًا. مؤشر ROAS يقارن بهدف 5.00.</div>
+    </div>
+  </section>
+
+  <section class="summary-panel">
+    <div class="summary-head">
+      <div>
+        <h2>إجمالي الحملة</h2>
+        <p>اكتب القيم يدويًا بالأرقام الإنجليزية. هذه القيم مستقلة تمامًا عن المنتجات.</p>
+      </div>
+      <span class="manual-badge">Manual Entry</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-title">المبلغ المنفق</div>
+        <input class="kpi-input" id="campaignSpend" lang="en" inputmode="decimal" type="text"
+          oninput="englishOnly(this);setCampaignMoney('spendUsd',this.value)" onblur="normalizeField(this,2)">
+        <div class="kpi-foot" id="campaignCurrency1"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">عدد المبيعات</div>
+        <input class="kpi-input" id="campaignSalesCount" lang="en" inputmode="numeric" type="text"
+          oninput="englishIntegerOnly(this);setCampaignCount('salesCount',this.value)" onblur="normalizeField(this,0)">
+        <div class="kpi-foot">Sales</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">النقرات</div>
+        <input class="kpi-input" id="campaignClicks" lang="en" inputmode="numeric" type="text"
+          oninput="englishIntegerOnly(this);setCampaignCount('clicks',this.value)" onblur="normalizeField(this,0)">
+        <div class="kpi-foot">Clicks</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">ROAS</div>
+        <div class="readonly-value" id="campaignRoas">0.00</div>
+        <div class="kpi-foot">Auto Calculated</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-title">قيمة المبيعات</div>
+        <input class="kpi-input" id="campaignSalesValue" lang="en" inputmode="decimal" type="text"
+          oninput="englishOnly(this);setCampaignMoney('salesValueUsd',this.value)" onblur="normalizeField(this,2)">
+        <div class="kpi-foot" id="campaignCurrency2"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <div>
+      <h2>المنتجات</h2>
+      <p>المؤشرات الرسومية تظهر بجانب صورة أو فيديو كل منتج.</p>
+    </div>
+    <button class="btn primary" onclick="addProduct()">＋ إضافة منتج جديد</button>
+  </div>
+
+  <section class="products" id="products"></section>
+  <div class="footer">كل تقرير شهري ومنتجاته ووسائطه محفوظة بصورة مستقلة. استخدم «تصدير حزمة ZIP» لإنشاء مجلد مضغوط يحتوي الموقع والبيانات والوسائط. لتشغيل وتحويل الفيديو تلقائيًا افتح الموقع من ملف تشغيل REXO الموجود في النسخة المضغوطة. عند حفظ PDF فعّل رسومات الخلفية للحفاظ على الألوان.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reportModal" onclick="modalBackdropClose(event)">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="reportModalTitle">تقرير شهري جديد</h3>
+        <p>حدد اسم التقرير والفترة. تستطيع مثلًا إنشاء تقرير يوليو كاملًا أو من 1 إلى 15 يوليو.</p>
+      </div>
+      <button class="modal-close" onclick="closeReportModal()">×</button>
+    </div>
+    <div class="modal-fields">
+      <div class="modal-field">
+        <label>اسم التقرير</label>
+        <input id="reportNameField" type="text" placeholder="مثال: تقرير شهر يوليو">
+      </div>
+      <div class="date-fields">
+        <div class="modal-field">
+          <label>من تاريخ</label>
+          <input id="reportStartField" type="date" lang="en" dir="ltr">
+        </div>
+        <div class="modal-field">
+          <label>إلى تاريخ</label>
+          <input id="reportEndField" type="date" lang="en" dir="ltr">
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="saveReportModal()">حفظ التقرير</button>
+      <button class="btn" onclick="closeReportModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+
+<input id="portableImportInput" type="file" accept=".html,.htm,.rexo,.json" hidden onchange="importPortableFile(event)">
+<div class="portable-progress" id="portableProgress">
+  <div class="portable-progress-card">
+    <h3 id="portableProgressTitle">جاري تجهيز حزمة ZIP</h3>
+    <p id="portableProgressText">يتم نسخ التقارير والصور والفيديوهات إلى الحزمة المحمولة.</p>
+    <div class="portable-progress-bar"><span id="portableProgressBar"></span></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY='rexo_monthly_reports_dashboard_v13';
+const LEGACY_KEYS=[
+  'rexo_product_dashboard_reports_v12',
+  'rexo_product_dashboard_v11',
+  'rexo_product_dashboard_v10'
+];
+const DB_NAME='rexo_media_db_v11';
+const DB_STORE='media';
+let dbPromise=null;
+const runtimeMediaUrls={};
+const runtimeMediaTypes={};
+const runtimeMediaData={};
+const runtimeVideoUrls={};
+const runtimeSourceFiles={};
+const portableExternalMedia={};
+const convertingMediaIds=new Set();
+const convertedMediaIds=new Set();
+let reportModalMode='new';
+let editingReportId=null;
+let comparisonSeed=null;
+let packageAccessMode='readonly';
+let packageUnlockPinHash='';
+let packageExportId='';
+let readonlySessionUnlocked=false;
+
+const AR_MONTHS=[
+  'يناير','فبراير','مارس','أبريل','مايو','يونيو',
+  'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'
+];
+
+function uid(){return 'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
+function reportUid(){return 'r_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
+function isoDateLocal(date){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,'0');
+  const d=String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+function defaultPeriod(){
+  const now=new Date();
+  const first=new Date(now.getFullYear(),now.getMonth(),1);
+  const last=new Date(now.getFullYear(),now.getMonth()+1,0);
+  return {start:isoDateLocal(first),end:isoDateLocal(last)};
+}
+function monthlyNameFromDate(value){
+  const match=String(value||'').match(/^(\d{4})-(\d{2})/);
+  if(!match)return 'تقرير جديد';
+  const year=match[1];
+  const month=AR_MONTHS[Math.max(0,Math.min(11,Number(match[2])-1))];
+  return `تقرير شهر ${month} ${year}`;
+}
+function defaultProduct(index=1){
+  return {id:uid(),name:'المنتج '+index,campaign:'',spendUsd:0,salesCount:0,clicks:0,salesValueUsd:0,notes:''};
+}
+function defaultReport(name='',periodStart='',periodEnd=''){
+  const now=Date.now();
+  const period=defaultPeriod();
+  const start=periodStart||period.start;
+  const end=periodEnd||period.end;
+  return {
+    id:reportUid(),
+    name:name||monthlyNameFromDate(start),
+    periodStart:start,
+    periodEnd:end,
+    currency:'SAR',
+    rate:3.75,
+    campaign:{spendUsd:0,salesCount:0,clicks:0,salesValueUsd:0},
+    products:[defaultProduct(1)],
+    createdAt:now,
+    updatedAt:now
+  };
+}
+function normalizeDigits(value){
+  return String(value??'')
+    .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+}
+function englishOnly(input){
+  let v=normalizeDigits(input.value).replace(/[^0-9.]/g,'');
+  const parts=v.split('.');
+  if(parts.length>2)v=parts.shift()+'.'+parts.join('');
+  input.value=v;
+}
+function englishIntegerOnly(input){
+  input.value=normalizeDigits(input.value).replace(/[^0-9]/g,'');
+}
+function normalizeField(input,decimals){
+  const n=Number(input.value)||0;
+  input.value=decimals===0?String(Math.round(n)):n.toFixed(decimals);
+}
+function asciiInput(value,decimals=2){
+  const n=Number(value)||0;
+  return decimals===0?String(Math.round(n)):n.toFixed(decimals);
+}
+function fmt(value,decimals=0){
+  return new Intl.NumberFormat('en-US',{
+    minimumFractionDigits:decimals,maximumFractionDigits:decimals
+  }).format(Number(value)||0)
+}
+function normalizeReport(r,index=0){
+  const now=Date.now();
+  const period=defaultPeriod();
+  return {
+    id:r?.id||reportUid(),
+    name:String(r?.name||('التقرير '+(index+1))),
+    periodStart:r?.periodStart||period.start,
+    periodEnd:r?.periodEnd||period.end,
+    currency:r?.currency==='USD'?'USD':'SAR',
+    rate:Number(r?.rate)>0?Number(r.rate):3.75,
+    campaign:{
+      spendUsd:Number(r?.campaign?.spendUsd)||0,
+      salesCount:Number(r?.campaign?.salesCount)||0,
+      clicks:Number(r?.campaign?.clicks)||0,
+      salesValueUsd:Number(r?.campaign?.salesValueUsd)||0
+    },
+    products:Array.isArray(r?.products)&&r.products.length
+      ? r.products.map((p,i)=>({
+          id:p?.id||uid(),
+          name:p?.name||('المنتج '+(i+1)),
+          campaign:p?.campaign||'',
+          spendUsd:Number(p?.spendUsd)||0,
+          salesCount:Number(p?.salesCount)||0,
+          clicks:Number(p?.clicks)||0,
+          salesValueUsd:Number(p?.salesValueUsd)||0,
+          notes:p?.notes||''
+        }))
+      : [defaultProduct(1)],
+    createdAt:Number(r?.createdAt)||now,
+    updatedAt:Number(r?.updatedAt)||now
+  };
+}
+function loadWorkspace(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORE_KEY));
+    if(saved&&Array.isArray(saved.reports)&&saved.reports.length){
+      const reports=saved.reports.map(normalizeReport);
+      const active=reports.some(r=>r.id===saved.activeReportId)?saved.activeReportId:reports[0].id;
+      return {theme:saved.theme==='light'?'light':'dark',activeReportId:active,reports};
+    }
+  }catch(e){}
+
+  for(const key of LEGACY_KEYS){
+    try{
+      const old=JSON.parse(localStorage.getItem(key));
+      if(!old)continue;
+
+      if(Array.isArray(old.reports)&&old.reports.length){
+        const reports=old.reports.map(normalizeReport);
+        const active=reports.some(r=>r.id===old.activeReportId)?old.activeReportId:reports[0].id;
+        return {theme:old.theme==='light'?'light':'dark',activeReportId:active,reports};
+      }
+
+      if(Array.isArray(old.products)&&old.products.length){
+        const migrated=normalizeReport({...old,name:old.name||'التقرير المحفوظ'},0);
+        return {theme:old.theme==='light'?'light':'dark',activeReportId:migrated.id,reports:[migrated]};
+      }
+    }catch(e){}
+  }
+
+  const first=defaultReport();
+  return {theme:'dark',activeReportId:first.id,reports:[first]};
+}
+let workspace=loadWorkspace();
+
+function currentReport(){
+  let report=workspace.reports.find(r=>r.id===workspace.activeReportId);
+  if(!report){
+    report=workspace.reports[0]||defaultReport();
+    if(!workspace.reports.length)workspace.reports.push(report);
+    workspace.activeReportId=report.id;
+  }
+  return report;
+}
+const state=new Proxy({},{
+  get(_target,prop){
+    if(prop==='theme')return workspace.theme;
+    return currentReport()[prop];
+  },
+  set(_target,prop,value){
+    if(prop==='theme')workspace.theme=value;
+    else currentReport()[prop]=value;
+    return true;
+  }
+});
+function persistWorkspace(){
+  localStorage.setItem(STORE_KEY,JSON.stringify(workspace));
+}
+function saveState(){
+  currentReport().updatedAt=Date.now();
+  persistWorkspace();
+  renderHome();
+  renderReportManager();
+}
+function openMediaDB(){
+  if(dbPromise)return dbPromise;
+  dbPromise=new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains(DB_STORE))db.createObjectStore(DB_STORE,{keyPath:'id'});
+    };
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+  return dbPromise;
+}
+async function putMedia(productId,file,mimeType){
+  const db=await openMediaDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(DB_STORE,'readwrite');
+    tx.objectStore(DB_STORE).put({
+      id:productId,
+      blob:file,
+      type:mimeType||file.type||'application/octet-stream',
+      name:file.name,
+      updatedAt:Date.now()
+    });
+    tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);
+  });
+}
+async function getMedia(productId){
+  const db=await openMediaDB();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).get(productId);
+    req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);
+  });
+}
+async function deleteMedia(productId){
+  const db=await openMediaDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).delete(productId);
+    tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);
+  });
+}
+async function clearMediaDB(){
+  const db=await openMediaDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(DB_STORE,'readwrite');
+    tx.objectStore(DB_STORE).clear();
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+function currencyName(){return state.currency==='SAR'?'SAR':'USD'}
+function displayAmount(usd){return state.currency==='SAR'?(Number(usd)||0)*state.rate:(Number(usd)||0)}
+function toUsd(display){return state.currency==='SAR'?(Number(display)||0)/state.rate:(Number(display)||0)}
+function roasFrom(spend,sales){return Number(spend)>0?Number(sales)/Number(spend):0}
+function clampPercent(v){return Math.max(0,Math.min(100,Number(v)||0))}
+function share(value,total){return Number(total)>0?clampPercent((Number(value)||0)/Number(total)*100):0}
+function logScalePercent(value,base){
+  const v=Math.max(0,Number(value)||0);
+  const b=Math.max(1,Number(base)||1);
+  if(v<=0) return 0;
+  return clampPercent((Math.log10(v+1)/Math.log10(b+1))*100);
+}
+function metricPercent(value,total,fallbackBase){
+  if(Number(total)>0) return share(value,total);
+  return logScalePercent(value,fallbackBase);
+}
+function roasPercent(value){return clampPercent((Number(value)||0)/5*100)}
+function moneyFallbackBase(displayValue){
+  const v=Math.max(0,Number(displayValue)||0);
+  return Math.max(1000, Math.pow(10, Math.ceil(Math.log10(v+1))));
+}
+function countFallbackBase(value, minBase){
+  const v=Math.max(0,Number(value)||0);
+  return Math.max(minBase, Math.pow(10, Math.ceil(Math.log10(v+1))));
+}
+function fileToDataURL(fileOrBlob){
+  return new Promise((resolve,reject)=>{
+    try{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(reader.result);
+      reader.onerror=()=>reject(reader.error||new Error('read failed'));
+      reader.readAsDataURL(fileOrBlob);
+    }catch(err){reject(err)}
+  });
+}
+function toast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200)
+}
+function isReadOnlyMode(){
+  return packageAccessMode==='readonly';
+}
+function requireEdit(){
+  if(!isReadOnlyMode())return true;
+  alert('هذه نسخة تصفح فقط. استخدم زر «فتح التعديل بالرمز السري» أولًا.');
+  return false;
+}
+async function sha256Text(value){
+  const bytes=new TextEncoder().encode(String(value||''));
+  const hash=await crypto.subtle.digest('SHA-256',bytes);
+  return [...new Uint8Array(hash)].map(value=>value.toString(16).padStart(2,'0')).join('');
+}
+function applyAccessMode(){
+  const readonly=isReadOnlyMode();
+  document.body.classList.toggle('readonly-mode',readonly);
+
+  document.querySelectorAll('#reportView input, #reportView textarea').forEach(element=>{
+    if(element.type==='file')return;
+    element.readOnly=readonly;
+    element.tabIndex=readonly?-1:0;
+  });
+
+  document.querySelectorAll('#reportView select').forEach(element=>{
+    if(element.id==='reportSelect'){
+      element.disabled=false;
+      return;
+    }
+    element.disabled=readonly;
+  });
+
+  document.querySelectorAll('#compareA, #compareB, #compareCurrency').forEach(element=>{
+    element.disabled=false;
+  });
+
+  document.querySelectorAll('button.edit-only').forEach(button=>{
+    button.disabled=readonly;
+  });
+
+  const lockedLabel=document.getElementById('unlockEditButton');
+  if(lockedLabel)lockedLabel.style.display=readonly?'inline-flex':'none';
+}
+async function unlockEditing(){
+  alert('هذه نسخة تصفح فقط، والتعديل غير متاح فيها.');
+}
+function setPackageAccess(payload){
+  packageAccessMode=payload?.accessMode==='readonly'?'readonly':'editable';
+  packageUnlockPinHash='';
+  packageExportId=String(payload?.exportId||'');
+  readonlySessionUnlocked=false;
+  applyAccessMode();
+}
+function formatDateTime(timestamp){
+  try{
+    return new Intl.DateTimeFormat('en-GB',{
+      day:'2-digit',month:'2-digit',year:'numeric',
+      hour:'2-digit',minute:'2-digit',hour12:false
+    }).format(new Date(timestamp));
+  }catch(e){return ''}
+}
+function formatPeriodDate(value){
+  const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!match)return '—';
+  return `${Number(match[3])} ${AR_MONTHS[Number(match[2])-1]} ${match[1]}`;
+}
+function periodLabel(report){
+  if(!report)return '';
+  if(report.periodStart===report.periodEnd)return formatPeriodDate(report.periodStart);
+  return `من ${formatPeriodDate(report.periodStart)} إلى ${formatPeriodDate(report.periodEnd)}`;
+}
+function reportAmount(report,usd){
+  return report.currency==='SAR'?(Number(usd)||0)*report.rate:(Number(usd)||0);
+}
+function reportRoas(report){
+  const spend=Number(report.campaign.spendUsd)||0;
+  const value=Number(report.campaign.salesValueUsd)||0;
+  return spend>0?value/spend:0;
+}
+function showOnlyView(id){
+  document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  const toolbar=document.getElementById('reportToolbar');
+  if(toolbar)toolbar.style.display=id==='reportView'?'flex':'none';
+}
+function setHeader(title,subtitle){
+  const titleEl=document.getElementById('pageTitle');
+  const subEl=document.getElementById('pageSubtitle');
+  if(titleEl)titleEl.textContent=title;
+  if(subEl)subEl.textContent=subtitle;
+}
+function updateRouteHash(value){
+  try{
+    history.replaceState(null,'','#'+value);
+  }catch(e){
+    try{location.hash=value}catch(ignore){}
+  }
+}
+function displayHomeView(){
+  renderHome();
+  showOnlyView('homeView');
+  setHeader('التقارير الشهرية','صفحة رئيسية لكل التقارير الشهرية المستقلة • REXO');
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  requestAnimationFrame(applyAccessMode);
+}
+function displayReportView(reportId){
+  const report=workspace.reports.find(item=>item.id===reportId);
+  if(!report){
+    alert('تعذر العثور على التقرير');
+    displayHomeView();
+    return false;
+  }
+
+  workspace.activeReportId=reportId;
+  persistWorkspace();
+
+  renderReportManager();
+  renderCampaignSummary();
+  renderProducts();
+
+  const heading=document.getElementById('activeReportHeading');
+  const period=document.getElementById('activeReportPeriod');
+  if(heading)heading.textContent=report.name;
+  if(period)period.textContent=periodLabel(report);
+
+  showOnlyView('reportView');
+  setHeader(report.name,periodLabel(report)+' • أرقام إنجليزية • REXO');
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  requestAnimationFrame(applyAccessMode);
+  return true;
+}
+function displayComparisonView(seedId=null){
+  comparisonSeed=seedId;
+  renderComparisonSelectors();
+
+  if(seedId){
+    const first=document.getElementById('compareA');
+    if(first&&workspace.reports.some(report=>report.id===seedId)){
+      first.value=seedId;
+    }
+    const second=document.getElementById('compareB');
+    if(second&&second.value===seedId){
+      const alternative=workspace.reports.find(report=>report.id!==seedId);
+      if(alternative)second.value=alternative.id;
+    }
+  }
+
+  renderComparison();
+  showOnlyView('comparisonView');
+  setHeader('مقارنة التقارير','قارن بين شهرين أو فترتين مستقلتين • REXO');
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  requestAnimationFrame(applyAccessMode);
+}
+function navigateHome(){
+  updateRouteHash('home');
+  displayHomeView();
+}
+function openReportPage(reportId){
+  updateRouteHash('report/'+reportId);
+  displayReportView(reportId);
+}
+function navigateReport(reportId){
+  openReportPage(reportId);
+}
+function navigateComparison(seedId=null){
+  updateRouteHash('compare');
+  displayComparisonView(seedId);
+}
+function applyRoute(){
+  const route=(location.hash||'#home').slice(1);
+
+  if(route.startsWith('report/')){
+    const reportId=route.split('/')[1];
+    if(displayReportView(reportId))return;
+  }
+
+  if(route==='compare'){
+    displayComparisonView(comparisonSeed);
+    comparisonSeed=null;
+    return;
+  }
+
+  displayHomeView();
+}
+function renderHome(){
+  const cards=document.getElementById('reportCards');
+  if(!cards)return;
+
+  const totalSpendSar=workspace.reports.reduce((sum,r)=>{
+    return sum+((Number(r.campaign.spendUsd)||0)*(Number(r.rate)||3.75));
+  },0);
+  const totalSales=workspace.reports.reduce((sum,r)=>sum+(Number(r.campaign.salesCount)||0),0);
+  const latest=Math.max(...workspace.reports.map(r=>Number(r.updatedAt)||0),0);
+
+  document.getElementById('homeReportsCount').textContent=fmt(workspace.reports.length,0);
+  document.getElementById('homeTotalSpend').textContent=fmt(totalSpendSar,2)+' SAR';
+  document.getElementById('homeSalesCount').textContent=fmt(totalSales,0);
+  document.getElementById('homeLatestUpdate').textContent=latest?formatDateTime(latest):'—';
+
+  if(!workspace.reports.length){
+    cards.innerHTML='<div class="empty-reports">لا توجد تقارير بعد. اضغط «إضافة تقرير جديد».</div>';
+    return;
+  }
+
+  const sorted=[...workspace.reports].sort((a,b)=>(b.periodStart||'').localeCompare(a.periodStart||''));
+  cards.innerHTML=sorted.map(report=>{
+    const currency=report.currency;
+    return `<article class="month-report-card" role="button" tabindex="0"
+      data-report-id="${report.id}"
+      onclick="openReportPage(this.dataset.reportId)"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openReportPage(this.dataset.reportId)}">
+      <div class="month-card-top">
+        <div>
+          <h3 class="month-card-title">${escapeHtml(report.name)}</h3>
+          <div class="month-card-period">${escapeHtml(periodLabel(report))}</div>
+        </div>
+        <span class="month-card-badge">${fmt(report.products.length,0)} منتجات</span>
+      </div>
+      <div class="month-kpis">
+        <div class="month-kpi"><small>المنفق</small><strong>${fmt(reportAmount(report,report.campaign.spendUsd),2)} ${currency}</strong></div>
+        <div class="month-kpi"><small>المبيعات</small><strong>${fmt(report.campaign.salesCount,0)}</strong></div>
+        <div class="month-kpi"><small>ROAS</small><strong>${fmt(reportRoas(report),2)}</strong></div>
+        <div class="month-kpi"><small>قيمة المبيعات</small><strong>${fmt(reportAmount(report,report.campaign.salesValueUsd),2)} ${currency}</strong></div>
+      </div>
+      <div class="month-card-footer">
+        <div class="month-card-updated">آخر حفظ: ${formatDateTime(report.updatedAt)}</div>
+        <div class="month-card-actions">
+          <button type="button" class="open-report-btn" data-report-id="${report.id}"
+            onclick="event.stopPropagation();openReportPage(this.dataset.reportId)">فتح التقرير</button>
+          <button class="mini-btn" onclick="event.stopPropagation();navigateComparison('${report.id}')">مقارنة</button>
+          <button class="mini-btn edit-only" onclick="event.stopPropagation();openReportModal('edit','${report.id}')">تعديل</button>
+          <button class="mini-btn edit-only" onclick="event.stopPropagation();duplicateReportById('${report.id}')">نسخ</button>
+          <button class="mini-btn danger edit-only" onclick="event.stopPropagation();deleteReportById('${report.id}')">حذف</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+function renderReportManager(){
+  const select=document.getElementById('reportSelect');
+  if(!select)return;
+  select.innerHTML=workspace.reports.map(r=>
+    `<option value="${r.id}" ${r.id===workspace.activeReportId?'selected':''}>${escapeHtml(r.name)}</option>`
+  ).join('');
+  document.getElementById('reportCountText').textContent='عدد التقارير: '+fmt(workspace.reports.length,0);
+  document.getElementById('reportUpdatedText').textContent='آخر حفظ: '+formatDateTime(currentReport().updatedAt);
+  const report=currentReport();
+  const heading=document.getElementById('activeReportHeading');
+  const period=document.getElementById('activeReportPeriod');
+  if(heading)heading.textContent=report.name;
+  if(period)period.textContent=periodLabel(report);
+}
+function openReportModal(mode='new',reportId=null){
+  if(!requireEdit())return;
+  reportModalMode=mode;
+  editingReportId=reportId;
+  const modal=document.getElementById('reportModal');
+  const title=document.getElementById('reportModalTitle');
+  const nameField=document.getElementById('reportNameField');
+  const startField=document.getElementById('reportStartField');
+  const endField=document.getElementById('reportEndField');
+
+  if(mode==='edit'){
+    const report=workspace.reports.find(r=>r.id===reportId)||currentReport();
+    editingReportId=report.id;
+    title.textContent='تعديل بيانات التقرير';
+    nameField.value=report.name;
+    startField.value=report.periodStart||'';
+    endField.value=report.periodEnd||'';
+  }else{
+    const period=defaultPeriod();
+    title.textContent='تقرير شهري جديد';
+    nameField.value=monthlyNameFromDate(period.start);
+    startField.value=period.start;
+    endField.value=period.end;
+  }
+  modal.classList.add('open');
+  setTimeout(()=>nameField.focus(),50);
+}
+function closeReportModal(){
+  document.getElementById('reportModal')?.classList.remove('open');
+}
+function modalBackdropClose(event){
+  if(event.target.id==='reportModal')closeReportModal();
+}
+function saveReportModal(){
+  if(!requireEdit())return;
+  const name=document.getElementById('reportNameField').value.trim();
+  const start=document.getElementById('reportStartField').value;
+  const end=document.getElementById('reportEndField').value;
+
+  if(!start||!end){
+    alert('حدد تاريخ البداية والنهاية');
+    return;
+  }
+  if(end<start){
+    alert('تاريخ النهاية يجب أن يكون بعد تاريخ البداية');
+    return;
+  }
+
+  if(reportModalMode==='edit'){
+    const report=workspace.reports.find(r=>r.id===editingReportId);
+    if(!report)return;
+    report.name=name||monthlyNameFromDate(start);
+    report.periodStart=start;
+    report.periodEnd=end;
+    report.updatedAt=Date.now();
+    persistWorkspace();
+    closeReportModal();
+    applyRoute();
+    toast('تم تحديث التقرير');
+    return;
+  }
+
+  const report=defaultReport(name||monthlyNameFromDate(start),start,end);
+  workspace.reports.push(report);
+  workspace.activeReportId=report.id;
+  persistWorkspace();
+  closeReportModal();
+  renderAll();
+  navigateReport(report.id);
+  toast('تم إنشاء تقرير مستقل');
+}
+async function cloneStoredMedia(oldId,newId){
+  try{
+    const record=await getMedia(oldId);
+    if(!record)return;
+    const db=await openMediaDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(DB_STORE,'readwrite');
+      tx.objectStore(DB_STORE).put({...record,id:newId,updatedAt:Date.now()});
+      tx.oncomplete=()=>resolve();
+      tx.onerror=()=>reject(tx.error);
+    });
+  }catch(e){}
+}
+async function duplicateReportById(reportId){
+  if(!requireEdit())return;
+  const source=workspace.reports.find(r=>r.id===reportId);
+  if(!source)return;
+  const productPairs=source.products.map(p=>({source:p,copy:{...p,id:uid()}}));
+  const duplicate=normalizeReport({
+    ...source,
+    id:reportUid(),
+    name:source.name+' - نسخة',
+    products:productPairs.map(x=>x.copy),
+    createdAt:Date.now(),
+    updatedAt:Date.now()
+  },workspace.reports.length);
+
+  workspace.reports.push(duplicate);
+  workspace.activeReportId=duplicate.id;
+  persistWorkspace();
+  await Promise.all(productPairs.map(x=>cloneStoredMedia(x.source.id,x.copy.id)));
+  renderAll();
+  navigateReport(duplicate.id);
+  toast('تم نسخ التقرير كاملًا');
+}
+async function duplicateReport(){
+  return duplicateReportById(workspace.activeReportId);
+}
+async function deleteReportById(reportId){
+  if(!requireEdit())return;
+  const report=workspace.reports.find(r=>r.id===reportId);
+  if(!report)return;
+  if(workspace.reports.length===1){
+    alert('لا يمكن حذف التقرير الوحيد. أنشئ تقريرًا آخر أولًا أو فرّغ التقرير الحالي.');
+    return;
+  }
+  if(!confirm('حذف تقرير «'+report.name+'» بكل منتجاته ووسائطه؟'))return;
+
+  await Promise.all(report.products.map(async p=>{
+    try{await deleteMedia(p.id)}catch(e){}
+    if(runtimeMediaUrls[p.id]){try{URL.revokeObjectURL(runtimeMediaUrls[p.id])}catch(e){}}
+    if(runtimeVideoUrls[p.id]){try{URL.revokeObjectURL(runtimeVideoUrls[p.id])}catch(e){}}
+    delete runtimeMediaUrls[p.id];
+    delete runtimeVideoUrls[p.id];
+    delete runtimeMediaTypes[p.id];
+    delete runtimeMediaData[p.id];
+  }));
+
+  workspace.reports=workspace.reports.filter(r=>r.id!==reportId);
+  if(workspace.activeReportId===reportId)workspace.activeReportId=workspace.reports[0].id;
+  persistWorkspace();
+  renderAll();
+  navigateHome();
+  toast('تم حذف التقرير');
+}
+async function deleteReport(){
+  return deleteReportById(workspace.activeReportId);
+}
+function renderComparisonSelectors(){
+  const a=document.getElementById('compareA');
+  const b=document.getElementById('compareB');
+  if(!a||!b)return;
+  const oldA=a.value;
+  const oldB=b.value;
+  const options=workspace.reports.map(r=>
+    `<option value="${r.id}">${escapeHtml(r.name)} — ${escapeHtml(periodLabel(r))}</option>`
+  ).join('');
+  a.innerHTML=options;
+  b.innerHTML=options;
+
+  const first=workspace.reports[0]?.id||'';
+  const second=workspace.reports[1]?.id||first;
+  a.value=workspace.reports.some(r=>r.id===oldA)?oldA:first;
+  b.value=workspace.reports.some(r=>r.id===oldB)?oldB:second;
+}
+function reportMetrics(report,targetCurrency){
+  const convert=usd=>targetCurrency==='SAR'?(Number(usd)||0)*report.rate:(Number(usd)||0);
+  const spend=Number(report.campaign.spendUsd)||0;
+  const salesValue=Number(report.campaign.salesValueUsd)||0;
+  return {
+    spend:convert(spend),
+    salesCount:Number(report.campaign.salesCount)||0,
+    clicks:Number(report.campaign.clicks)||0,
+    roas:spend>0?salesValue/spend:0,
+    salesValue:convert(salesValue)
+  };
+}
+function renderComparison(){
+  const root=document.getElementById('comparisonContent');
+  const aSelect=document.getElementById('compareA');
+  const bSelect=document.getElementById('compareB');
+  const currencySelect=document.getElementById('compareCurrency');
+  if(!root||!aSelect||!bSelect)return;
+
+  if(workspace.reports.length<2){
+    root.innerHTML='<div class="compare-empty">أنشئ تقريرًا ثانيًا حتى تبدأ المقارنة.</div>';
+    return;
+  }
+
+  const reportA=workspace.reports.find(r=>r.id===aSelect.value)||workspace.reports[0];
+  const reportB=workspace.reports.find(r=>r.id===bSelect.value)||workspace.reports[1];
+  const currency=currencySelect?.value||'SAR';
+  const a=reportMetrics(reportA,currency);
+  const b=reportMetrics(reportB,currency);
+
+  const metrics=[
+    {key:'spend',label:'المبلغ المنفق',decimals:2,unit:currency},
+    {key:'salesCount',label:'عدد المبيعات',decimals:0,unit:'Sales'},
+    {key:'clicks',label:'النقرات',decimals:0,unit:'Clicks'},
+    {key:'roas',label:'ROAS',decimals:2,unit:'ROAS'},
+    {key:'salesValue',label:'قيمة المبيعات',decimals:2,unit:currency}
+  ];
+
+  root.innerHTML=
+    `<div class="report-meta" style="margin-bottom:14px">
+      <span>${escapeHtml(reportA.name)}: ${escapeHtml(periodLabel(reportA))}</span>
+      <span>${escapeHtml(reportB.name)}: ${escapeHtml(periodLabel(reportB))}</span>
+    </div>`+
+    '<div class="compare-grid">'+metrics.map(m=>{
+      const av=Number(a[m.key])||0,bv=Number(b[m.key])||0;
+      const max=Math.max(av,bv,1);
+      const aw=Math.min(100,av/max*100),bw=Math.min(100,bv/max*100);
+      const diff=bv-av;
+      const pct=av!==0?diff/Math.abs(av)*100:null;
+      const cls=diff>0?'positive':diff<0?'negative':'';
+      const deltaText=(diff>0?'+':'')+fmt(diff,m.decimals)
+        +(pct===null?'':` (${pct>0?'+':''}${fmt(pct,1)}%)`);
+      return `<div class="compare-card">
+        <div class="compare-metric">${m.label}</div>
+        <div class="compare-values">
+          <div class="compare-side"><small>${escapeHtml(reportA.name)}</small><strong>${fmt(av,m.decimals)}</strong></div>
+          <div class="compare-side"><small>${escapeHtml(reportB.name)}</small><strong>${fmt(bv,m.decimals)}</strong></div>
+        </div>
+        <div class="compare-bars">
+          <div class="compare-bar a"><span style="width:${aw}%"></span></div>
+          <div class="compare-bar b"><span style="width:${bw}%"></span></div>
+        </div>
+        <div class="compare-delta ${cls}">الفرق: ${deltaText} ${m.unit}</div>
+      </div>`;
+    }).join('')+'</div>';
+}
+function setCurrency(currency){
+  if(!requireEdit())return;state.currency=currency;saveState();renderAll()}
+function changeRate(value){
+  if(!requireEdit())return;
+  const n=Number(value);if(n>0){state.rate=n;saveState();renderCampaignSummary();renderProducts()}
+}
+function toggleTheme(){state.theme=state.theme==='light'?'dark':'light';saveState();applyTheme()}
+function applyTheme(){document.body.className=state.theme==='light'?'light':''}
+
+function setCampaignMoney(key,value){
+  if(!requireEdit())return;
+  state.campaign[key]=toUsd(value);saveState();
+  document.getElementById('campaignRoas').textContent=fmt(roasFrom(state.campaign.spendUsd,state.campaign.salesValueUsd),2);
+  refreshAllGauges()
+}
+function setCampaignCount(key,value){
+  if(!requireEdit())return;
+  state.campaign[key]=Math.max(0,Math.round(Number(value)||0));saveState();refreshAllGauges()
+}
+function renderCampaignSummary(){
+  const c=state.campaign;
+  document.getElementById('campaignSpend').value=asciiInput(displayAmount(c.spendUsd),2);
+  document.getElementById('campaignSalesCount').value=asciiInput(c.salesCount,0);
+  document.getElementById('campaignClicks').value=asciiInput(c.clicks,0);
+  document.getElementById('campaignSalesValue').value=asciiInput(displayAmount(c.salesValueUsd),2);
+  document.getElementById('campaignRoas').textContent=fmt(roasFrom(c.spendUsd,c.salesValueUsd),2);
+  document.getElementById('campaignCurrency1').textContent=currencyName();
+  document.getElementById('campaignCurrency2').textContent=currencyName();
+  document.getElementById('rateInput').value=asciiInput(state.rate,2);
+  document.getElementById('sarBtn').classList.toggle('active',state.currency==='SAR');
+  document.getElementById('usdBtn').classList.toggle('active',state.currency==='USD')
+}
+
+function setProductText(id,key,value){
+  if(!requireEdit())return;
+  const p=state.products.find(x=>x.id===id);if(!p)return;p[key]=value;saveState()
+}
+function setProductMoney(id,key,input){
+  if(!requireEdit())return;
+  englishOnly(input);
+  const p=state.products.find(x=>x.id===id);if(!p)return;
+  p[key]=toUsd(input.value);saveState();refreshProductGauges(id)
+}
+function setProductCount(id,key,input){
+  if(!requireEdit())return;
+  englishIntegerOnly(input);
+  const p=state.products.find(x=>x.id===id);if(!p)return;
+  p[key]=Math.max(0,Math.round(Number(input.value)||0));saveState();refreshProductGauges(id)
+}
+function gaugeStyle(id,key,pct){
+  const p=clampPercent(pct);
+  const gauge=document.getElementById('gauge_'+key+'_'+id);
+  const circle=document.getElementById('circle_'+key+'_'+id);
+  const bar=document.getElementById('bar_'+key+'_'+id);
+  const mini=document.getElementById('mini_'+key+'_'+id);
+  if(!gauge||!circle)return;
+
+  let color='#8b5cf6';
+  if(p < 35) color='#fb7185';
+  else if(p < 70) color='#fbbf24';
+  else color='#34d399';
+
+  gauge.style.setProperty('--accent', color);
+  circle.style.stroke = color;
+
+  const circumference = 2 * Math.PI * 54; // 339.292
+  const offset = circumference - (p / 100) * circumference;
+  circle.style.strokeDasharray = String(circumference);
+  circle.style.strokeDashoffset = String(offset);
+
+  if(bar){
+    bar.style.width = p + '%';
+    bar.style.background = color;
+  }
+  if(mini) mini.textContent = fmt(p,0) + '%';
+}
+function setGaugeText(id,key,text){
+  const el=document.getElementById('percent_'+key+'_'+id);if(el)el.textContent=text
+}
+function refreshProductGauges(id){
+  const p=state.products.find(x=>x.id===id);if(!p)return;
+  const c=state.campaign,pr=roasFrom(p.spendUsd,p.salesValueUsd);
+
+  const spendDisplay=displayAmount(p.spendUsd);
+  const salesValueDisplay=displayAmount(p.salesValueUsd);
+  const campaignSpendDisplay=displayAmount(c.spendUsd);
+  const campaignSalesValueDisplay=displayAmount(c.salesValueUsd);
+
+  const sp=metricPercent(spendDisplay,campaignSpendDisplay,moneyFallbackBase(spendDisplay));
+  const sc=metricPercent(p.salesCount,c.salesCount,countFallbackBase(p.salesCount,100));
+  const cp=metricPercent(p.clicks,c.clicks,countFallbackBase(p.clicks,1000));
+  const svp=metricPercent(salesValueDisplay,campaignSalesValueDisplay,moneyFallbackBase(salesValueDisplay));
+  const rp=roasPercent(pr);
+
+  gaugeStyle(id,'spend',sp);
+  gaugeStyle(id,'salesCount',sc);
+  gaugeStyle(id,'clicks',cp);
+  gaugeStyle(id,'roas',rp);
+  gaugeStyle(id,'salesValue',svp);
+
+  setGaugeText(id,'spend',campaignSpendDisplay>0 ? fmt(sp,1)+'% of campaign' : fmt(sp,1)+'% auto scale');
+  setGaugeText(id,'salesCount',c.salesCount>0 ? fmt(sc,1)+'% of campaign' : fmt(sc,1)+'% auto scale');
+  setGaugeText(id,'clicks',c.clicks>0 ? fmt(cp,1)+'% of campaign' : fmt(cp,1)+'% auto scale');
+  setGaugeText(id,'roas',fmt(rp,1)+'% of 5.00 target');
+  setGaugeText(id,'salesValue',campaignSalesValueDisplay>0 ? fmt(svp,1)+'% of campaign' : fmt(svp,1)+'% auto scale');
+
+  const roasEl=document.getElementById('value_roas_'+id);
+  if(roasEl){
+    roasEl.textContent=fmt(pr,2);
+    roasEl.title=p.spendUsd>0
+      ? fmt(displayAmount(p.salesValueUsd),2)+' ÷ '+fmt(displayAmount(p.spendUsd),2)
+      : 'أدخل المبلغ المنفق وقيمة المبيعات';
+  }
+}
+function refreshAllGauges(){state.products.forEach(p=>refreshProductGauges(p.id))}
+function addProduct(){
+  if(!requireEdit())return;
+  const p=defaultProduct(state.products.length+1);state.products.push(p);saveState();renderProducts();
+  setTimeout(()=>document.getElementById('card_'+p.id)?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+  toast('تمت إضافة منتج جديد')
+}
+async function removeProduct(id){
+  if(!requireEdit())return;
+  if(state.products.length===1){
+    if(!confirm('يوجد منتج واحد فقط. هل تريد تفريغ بياناته؟')) return;
+    await deleteMedia(id).catch(()=>{});
+    if(runtimeMediaUrls[id]){ try{URL.revokeObjectURL(runtimeMediaUrls[id])}catch(e){} delete runtimeMediaUrls[id]; }
+    if(runtimeVideoUrls[id]){ try{URL.revokeObjectURL(runtimeVideoUrls[id])}catch(e){} delete runtimeVideoUrls[id]; }
+    delete runtimeMediaTypes[id];
+    delete runtimeMediaData[id];
+    state.products=[defaultProduct(1)];
+  }else{
+    if(!confirm('حذف هذا المنتج؟')) return;
+    state.products=state.products.filter(x=>x.id!==id);
+    await deleteMedia(id).catch(()=>{});
+    if(runtimeMediaUrls[id]){ try{URL.revokeObjectURL(runtimeMediaUrls[id])}catch(e){} delete runtimeMediaUrls[id]; }
+    if(runtimeVideoUrls[id]){ try{URL.revokeObjectURL(runtimeVideoUrls[id])}catch(e){} delete runtimeVideoUrls[id]; }
+    delete runtimeMediaTypes[id];
+    delete runtimeMediaData[id];
+  }
+  saveState();
+  renderProducts();
+}
+function duplicateProduct(id){
+  if(!requireEdit())return;
+  const source=state.products.find(x=>x.id===id);if(!source)return;
+  const copy={...source,id:uid(),name:source.name+' - نسخة'};
+  state.products.push(copy);saveState();renderProducts();toast('تم نسخ المنتج بدون ملف الوسائط')
+}
+function gaugeCard(id,gaugeKey,stateKey,label,value,unit,pct,accent,editable,kind){
+  const style=`--accent:${accent}`;
+  const content=editable
+    ? `<input class="gauge-input" lang="en" inputmode="${kind==='integer'?'numeric':'decimal'}" type="text"
+         value="${kind==='integer'?asciiInput(value,0):asciiInput(value,2)}"
+         oninput="${kind==='integer'
+           ? `setProductCount('${id}','${stateKey}',this)`
+           : `setProductMoney('${id}','${stateKey}',this)`}">`
+    : `<div class="gauge-value" id="value_${gaugeKey}_${id}">${fmt(value,2)}</div>`;
+  return `<div class="gauge-card">
+    <div class="gauge-ring" id="gauge_${gaugeKey}_${id}" style="${style}">
+      <svg class="gauge-svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="gauge-track" cx="60" cy="60" r="54"></circle>
+        <circle class="gauge-progress" id="circle_${gaugeKey}_${id}" cx="60" cy="60" r="54"></circle>
+      </svg>
+      <div class="gauge-center"></div>
+      <div class="gauge-content">
+        <div class="gauge-label">${label}</div>
+        ${content}
+        <div class="gauge-unit">${unit}</div>
+        <div class="gauge-mini-percent" id="mini_${gaugeKey}_${id}">${fmt(pct,0)}%</div>
+      </div>
+    </div>
+    <div class="gauge-percent" id="percent_${gaugeKey}_${id}">${fmt(pct,1)}%</div>
+    <div class="gauge-bar" style="--accent:${accent}"><span id="bar_${gaugeKey}_${id}"></span></div>
+  </div>`
+}
+function productTemplate(p,index){
+  const c=state.campaign,pr=roasFrom(p.spendUsd,p.salesValueUsd);
+  return `
+  <article class="product-card" id="card_${p.id}">
+    <div class="product-head">
+      <div class="product-index">
+        <div class="badge">${index+1}</div>
+        <input value="${escapeHtml(p.name)}" aria-label="اسم المنتج" oninput="setProductText('${p.id}','name',this.value)">
+      </div>
+      <div class="product-actions">
+        <button class="icon-btn" title="نسخ المنتج" onclick="duplicateProduct('${p.id}')">⧉</button>
+        <button class="icon-btn" title="حذف المنتج" onclick="removeProduct('${p.id}')">×</button>
+      </div>
+    </div>
+    <div class="product-body">
+      <div>
+        <div class="graphic-panel">
+          <div class="graphic-title">
+            <strong>مؤشرات المنتج</strong>
+            <span>ROAS = قيمة المبيعات ÷ المنفق</span>
+          </div>
+          <div class="gauges">
+            ${gaugeCard(p.id,'spend','spendUsd','المبلغ المنفق',displayAmount(p.spendUsd),currencyName(),share(p.spendUsd,c.spendUsd),'var(--purple)',true,'decimal')}
+            ${gaugeCard(p.id,'salesCount','salesCount','عدد المبيعات',p.salesCount,'Sales',share(p.salesCount,c.salesCount),'var(--green)',true,'integer')}
+            ${gaugeCard(p.id,'clicks','clicks','النقرات',p.clicks,'Clicks',share(p.clicks,c.clicks),'var(--cyan)',true,'integer')}
+            ${gaugeCard(p.id,'roas','roas','ROAS',pr,'ROAS',roasPercent(pr),'var(--amber)',false,'decimal')}
+            ${gaugeCard(p.id,'salesValue','salesValueUsd','قيمة المبيعات',displayAmount(p.salesValueUsd),currencyName(),share(p.salesValueUsd,c.salesValueUsd),'var(--red)',true,'decimal')}
+          </div>
+        </div>
+        <div class="details-box">
+          <div class="details-grid">
+            <div class="field full">
+              <label>اسم الحملة</label>
+              <input value="${escapeHtml(p.campaign||'')}" placeholder="مثال: حملة الصيف"
+                oninput="setProductText('${p.id}','campaign',this.value)">
+            </div>
+            <div class="field full">
+              <label>ملاحظات</label>
+              <textarea placeholder="ملاحظات عن المنتج أو المحتوى"
+                oninput="setProductText('${p.id}','notes',this.value)">${escapeHtml(p.notes||'')}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="media-box">
+        <div class="media-drop" id="drop_${p.id}" onclick="document.getElementById('file_${p.id}').click()"
+          ondragover="dragOver(event,'${p.id}')" ondragleave="dragLeave('${p.id}')" ondrop="dropMedia(event,'${p.id}')">
+          <div>
+            <div class="drop-icon">＋</div>
+            <div class="drop-title">ارفع صورة أو فيديو</div>
+            <div class="drop-sub">اضغط هنا أو اسحب الملف داخل المساحة<br>يدعم الصور والفيديو</div><div class="video-help">يمكن رفع معظم صيغ الفيديو الشائعة. إذا لم تعمل مباشرة، يحوّلها الموقع تلقائيًا إلى MP4 متوافق.</div>
+            <button class="btn primary" type="button">اختيار ملف</button>
+          </div>
+        </div>
+        <input class="file-input" id="file_${p.id}" type="file" accept="image/*,video/*,.mp4,.webm,.mov,.m4v,.ogv,.ogg,.avi,.mkv,.wmv,.flv,.mts,.m2ts,.3gp,.3g2,.ts,.vob,.mpeg,.mpg,.hevc"
+          onchange="handleFile('${p.id}',this.files[0])">
+        <div class="preview-wrap" id="preview_${p.id}">
+          <div class="media-type" id="type_${p.id}"></div><div class="media-status" id="status_${p.id}"></div>
+          <div class="preview-media" id="media_${p.id}"></div>
+          <div class="preview-actions">
+            <button onclick="event.stopPropagation();playMediaVideo('${p.id}')">تشغيل</button>
+            <button onclick="event.stopPropagation();openMediaFull('${p.id}')">عرض كامل</button>
+            <button class="edit-only" onclick="event.stopPropagation();downloadMedia('${p.id}')">تنزيل</button>
+            <button class="edit-only" onclick="event.stopPropagation();document.getElementById('file_${p.id}').click()">استبدال</button>
+            <button class="edit-only" onclick="event.stopPropagation();removeMedia('${p.id}')">حذف الوسائط</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>`
+}
+function renderProducts(){
+  document.getElementById('products').innerHTML=state.products.map(productTemplate).join('');
+  state.products.forEach(p=>loadMediaPreview(p.id));
+  refreshAllGauges()
+}
+function escapeHtml(s){
+  return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))
+}
+function dragOver(e,id){
+  e.preventDefault();
+  document.getElementById('drop_'+id)?.classList.add('drag');
+}
+function dragLeave(id){
+  document.getElementById('drop_'+id)?.classList.remove('drag');
+}
+function dropMedia(e,id){
+  e.preventDefault();
+  dragLeave(id);
+  const file=e.dataTransfer.files?.[0];
+  if(file)handleFile(id,file);
+}
+function inferMediaType(fileOrName,typeHint=''){
+  const hint=String(typeHint||fileOrName?.type||'').toLowerCase();
+  if(hint.startsWith('image/')||hint.startsWith('video/'))return hint;
+  const name=String(fileOrName?.name||fileOrName||'').toLowerCase();
+  const ext=name.includes('.')?name.split('.').pop():'';
+  const map={
+    jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',
+    gif:'image/gif',bmp:'image/bmp',svg:'image/svg+xml',
+    mp4:'video/mp4',m4v:'video/mp4',mov:'video/quicktime',
+    webm:'video/webm',ogv:'video/ogg',ogg:'video/ogg',
+    avi:'video/x-msvideo',mkv:'video/x-matroska',wmv:'video/x-ms-wmv',
+    flv:'video/x-flv',mts:'video/mp2t',m2ts:'video/mp2t',
+    ts:'video/mp2t','3gp':'video/3gpp','3g2':'video/3gpp2',
+    vob:'video/mpeg',mpeg:'video/mpeg',mpg:'video/mpeg',
+    hevc:'video/h265'
+  };
+  return map[ext]||hint||'application/octet-stream';
+}
+function fileExtension(fileName,mime=''){
+  const name=String(fileName||'');
+  const match=name.match(/\.([a-zA-Z0-9]{1,8})$/);
+  if(match)return match[1].toLowerCase();
+  const type=String(mime||'').toLowerCase();
+  const fallback={
+    'video/mp4':'mp4','video/quicktime':'mov','video/webm':'webm',
+    'video/ogg':'ogv','video/x-msvideo':'avi','video/x-matroska':'mkv',
+    'video/x-ms-wmv':'wmv','video/x-flv':'flv','video/mp2t':'mts',
+    'video/3gpp':'3gp','video/3gpp2':'3g2','video/mpeg':'mpeg'
+  };
+  return fallback[type]||'video';
+}
+function browserVideoSupport(mime){
+  try{
+    const video=document.createElement('video');
+    return video.canPlayType(String(mime||'').split(';')[0]);
+  }catch(e){return ''}
+}
+function mediaSourceFor(id){
+  return runtimeMediaData[id]
+    ||runtimeVideoUrls[id]
+    ||runtimeMediaUrls[id]
+    ||portableExternalMedia[id]?.path
+    ||'';
+}
+function localConverterAvailable(){
+  return location.protocol==='http:' &&
+    (location.hostname==='localhost'||location.hostname==='127.0.0.1');
+}
+function cleanupRuntimeMedia(id){
+  if(runtimeMediaUrls[id]){
+    try{URL.revokeObjectURL(runtimeMediaUrls[id])}catch(e){}
+    delete runtimeMediaUrls[id];
+  }
+  if(runtimeVideoUrls[id]){
+    try{URL.revokeObjectURL(runtimeVideoUrls[id])}catch(e){}
+    delete runtimeVideoUrls[id];
+  }
+  delete runtimeMediaData[id];
+}
+async function handleFile(id,file){
+  if(!requireEdit())return;
+  if(!file)return;
+  const mime=inferMediaType(file);
+
+  if(!(mime.startsWith('image/')||mime.startsWith('video/'))){
+    alert('الملف يجب أن يكون صورة أو فيديو');
+    return;
+  }
+
+  cleanupRuntimeMedia(id);
+  runtimeSourceFiles[id]=file;
+  convertedMediaIds.delete(id);
+
+  if(mime.startsWith('image/')){
+    try{
+      const dataUrl=await fileToDataURL(file);
+      runtimeMediaData[id]=dataUrl;
+      runtimeMediaTypes[id]=mime;
+      showMediaPreview(id,dataUrl,mime,file.name);
+      await putMedia(id,file,mime);
+      toast('تم عرض وحفظ الصورة');
+    }catch(e){
+      alert('تعذر حفظ الصورة');
+    }
+    return;
+  }
+
+  const url=URL.createObjectURL(file);
+  runtimeVideoUrls[id]=url;
+  runtimeMediaTypes[id]=mime;
+  showMediaPreview(id,url,mime,file.name);
+
+  try{
+    await putMedia(id,file,mime);
+    toast('تم حفظ الفيديو — سيتم تحويله تلقائيًا إذا لم يعمل');
+  }catch(e){
+    toast('تم تجهيز الفيديو للعرض');
+  }
+}
+function showConversionStatus(id,message='جاري تحويل الفيديو إلى صيغة متوافقة'){
+  const media=document.getElementById('media_'+id);
+  const status=document.getElementById('status_'+id);
+  const type=document.getElementById('type_'+id);
+  if(status)status.textContent='جاري التحويل';
+  if(type)type.textContent='تحويل تلقائي';
+  if(media){
+    media.innerHTML=`<div class="conversion-status">
+      <div class="conversion-spinner"></div>
+      <strong>${escapeHtml(message)}</strong>
+      <p>قد يستغرق التحويل عدة دقائق حسب طول الفيديو وحجم الملف.<br>
+      لا تغلق نافذة تشغيل REXO أثناء التحويل.</p>
+      <div class="conversion-progress"><span></span></div>
+    </div>`;
+  }
+}
+function showVideoFallback(id,media,mime,fileName,errorCode='',serverMessage=''){
+  const support=browserVideoSupport(mime);
+  const supportText=support==='probably'
+    ? 'الصيغة معروفة، لكن ترميز الفيديو الداخلي غير مدعوم.'
+    : support==='maybe'
+      ? 'قد تكون الصيغة مدعومة، لكن ترميز الفيديو أو الصوت غير متوافق.'
+      : 'هذا المتصفح لا يدعم تشغيل الملف مباشرة.';
+  const converterText=localConverterAvailable()
+    ? 'اضغط «تحويل وتشغيل» ليحوّله الموقع تلقائيًا.'
+    : 'شغّل الموقع من ملف تشغيل REXO داخل النسخة المضغوطة لتفعيل التحويل التلقائي.';
+  media.innerHTML=`<div class="video-fallback">
+    <div>
+      <strong>الفيديو يحتاج تحويلًا</strong>
+      <p>${supportText}<br>
+      الملف: ${escapeHtml(fileName||'فيديو')}<br>
+      النوع: ${escapeHtml(mime||'غير معروف')}
+      ${errorCode?'<br>رمز الخطأ: '+escapeHtml(errorCode):''}
+      ${serverMessage?'<br>'+escapeHtml(serverMessage):''}<br>
+      ${converterText}</p>
+      <div class="video-fallback-actions">
+        <button class="btn primary" onclick="event.stopPropagation();convertAndPlay('${id}')">تحويل وتشغيل</button>
+        <button class="btn" onclick="event.stopPropagation();openMediaFull('${id}')">فتح الملف</button>
+        <button class="btn" onclick="event.stopPropagation();downloadMedia('${id}')">تنزيل الملف</button>
+      </div>
+    </div>
+  </div>`;
+}
+async function getSourceFileForConversion(id){
+  if(runtimeSourceFiles[id])return runtimeSourceFiles[id];
+  const record=await getMedia(id).catch(()=>null);
+  if(!record?.blob)return null;
+  const fileName=record.name||('video.'+fileExtension('',record.type));
+  const file=new File([record.blob],fileName,{type:record.type||inferMediaType(fileName)});
+  runtimeSourceFiles[id]=file;
+  return file;
+}
+async function convertAndPlay(id,automatic=false){
+  if(convertingMediaIds.has(id))return;
+
+  if(!localConverterAvailable()){
+    alert('التحويل التلقائي يعمل عند فتح الموقع من ملف تشغيل REXO داخل النسخة المضغوطة.');
+    return;
+  }
+
+  const source=await getSourceFileForConversion(id);
+  if(!source){
+    alert('لم يتم العثور على ملف الفيديو');
+    return;
+  }
+
+  convertingMediaIds.add(id);
+  showConversionStatus(id,automatic?'الفيديو غير مدعوم مباشرة — جاري تحويله تلقائيًا':'جاري تحويل الفيديو وتشغيله');
+
+  try{
+    const health=await fetch('/api/health',{cache:'no-store'});
+    if(!health.ok)throw new Error('خدمة التحويل غير جاهزة');
+
+    const ext=fileExtension(source.name,source.type);
+    const response=await fetch('/api/convert',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/octet-stream',
+        'X-File-Extension':ext,
+        'X-File-Name':encodeURIComponent(source.name||('video.'+ext))
+      },
+      body:source
+    });
+
+    if(!response.ok){
+      const text=await response.text().catch(()=>'');
+      throw new Error(text||('فشل التحويل: '+response.status));
+    }
+
+    const convertedBlob=await response.blob();
+    if(!convertedBlob.size)throw new Error('ملف التحويل فارغ');
+
+    const cleanName=(source.name||'video').replace(/\.[^.]+$/,'');
+    const convertedFile=new File(
+      [convertedBlob],
+      cleanName+'_REXO.mp4',
+      {type:'video/mp4',lastModified:Date.now()}
+    );
+
+    cleanupRuntimeMedia(id);
+    runtimeSourceFiles[id]=convertedFile;
+    runtimeMediaTypes[id]='video/mp4';
+    convertedMediaIds.add(id);
+
+    const url=URL.createObjectURL(convertedFile);
+    runtimeVideoUrls[id]=url;
+    await putMedia(id,convertedFile,'video/mp4');
+    showMediaPreview(id,url,'video/mp4',convertedFile.name,true);
+    toast('تم تحويل الفيديو وحفظ النسخة المتوافقة');
+
+    setTimeout(()=>{
+      const video=document.getElementById('video_'+id);
+      if(video){
+        video.muted=false;
+        video.play().catch(()=>{});
+      }
+    },250);
+  }catch(error){
+    const media=document.getElementById('media_'+id);
+    const status=document.getElementById('status_'+id);
+    if(status)status.textContent='فشل التحويل';
+    if(media){
+      showVideoFallback(
+        id,
+        media,
+        inferMediaType(source),
+        source.name,
+        '',
+        error?.message||'تعذر تشغيل خدمة التحويل'
+      );
+    }
+  }finally{
+    convertingMediaIds.delete(id);
+  }
+}
+function setMediaLayoutMode(id,mode){
+  const preview=document.getElementById('preview_'+id);
+  const box=preview?.closest('.media-box');
+  if(!preview||!box)return;
+
+  preview.classList.remove('image-mode','video-mode');
+  box.classList.remove('image-loaded','video-loaded');
+
+  if(mode==='image'){
+    preview.classList.add('image-mode');
+    box.classList.add('image-loaded');
+  }else if(mode==='video'){
+    preview.classList.add('video-mode');
+    box.classList.add('video-loaded');
+  }
+}
+
+function showMediaPreview(id,url,mimeType,fileName='',alreadyConverted=false){
+  const preview=document.getElementById('preview_'+id);
+  const media=document.getElementById('media_'+id);
+  const type=document.getElementById('type_'+id);
+  const status=document.getElementById('status_'+id);
+  if(!preview||!media||!type)return;
+
+  media.innerHTML='';
+  const mime=inferMediaType(fileName,mimeType);
+  runtimeMediaTypes[id]=mime;
+  if(alreadyConverted)convertedMediaIds.add(id);
+  preview.style.display='grid';
+
+  if(mime.startsWith('image/')){
+    setMediaLayoutMode(id,'image');
+    const img=document.createElement('img');
+    img.src=url;
+    img.alt='صورة المنتج';
+    img.decoding='async';
+    img.loading='eager';
+    img.onload=()=>{if(status)status.textContent='تم العرض'};
+    img.onerror=()=>{
+      if(status)status.textContent='فشل عرض الصورة';
+      media.innerHTML='<div class="video-fallback"><div><strong>تعذر عرض الصورة</strong><p>جرّب JPG أو PNG أو WEBP.</p></div></div>';
+    };
+    media.appendChild(img);
+    type.textContent='صورة';
+    if(status)status.textContent='جاري العرض';
+    return;
+  }
+
+  if(!mime.startsWith('video/')){
+    setMediaLayoutMode(id,'');
+    type.textContent='ملف';
+    if(status)status.textContent='صيغة غير معروفة';
+    showVideoFallback(id,media,mime,fileName);
+    return;
+  }
+
+  setMediaLayoutMode(id,'video');
+  const video=document.createElement('video');
+  video.id='video_'+id;
+  video.controls=true;
+  video.playsInline=true;
+  video.preload='auto';
+  video.muted=false;
+  video.volume=1;
+  video.src=url;
+  video.setAttribute('webkit-playsinline','');
+
+  video.onloadedmetadata=()=>{
+    const duration=Number.isFinite(video.duration)?Math.round(video.duration):0;
+    if(status)status.textContent=duration>0?`جاهز • ${duration} ثانية`:'جاهز للتشغيل';
+  };
+  video.oncanplay=()=>{if(status)status.textContent='جاهز للتشغيل'};
+  video.onplay=()=>{if(status)status.textContent='يعمل الآن'};
+  video.onpause=()=>{
+    if(status&&video.currentTime>0&&!video.ended)status.textContent='متوقف مؤقتًا';
+  };
+  video.onended=()=>{if(status)status.textContent='انتهى الفيديو'};
+  video.onwaiting=()=>{if(status)status.textContent='جاري التحميل'};
+  video.onerror=()=>{
+    const code=video.error?.code?String(video.error.code):'';
+    if(status)status.textContent='يحتاج تحويلًا';
+
+    if(!convertedMediaIds.has(id)&&localConverterAvailable()){
+      convertAndPlay(id,true);
+      return;
+    }
+    showVideoFallback(id,media,mime,fileName,code);
+  };
+
+  media.appendChild(video);
+  type.textContent=alreadyConverted?'فيديو محوّل':'فيديو';
+  if(status)status.textContent=browserVideoSupport(mime)?'جاري تجهيز الفيديو':'سيتم التحويل عند الحاجة';
+  try{video.load()}catch(e){}
+}
+async function loadMediaPreview(id){
+  if(runtimeMediaData[id]){
+    showMediaPreview(id,runtimeMediaData[id],runtimeMediaTypes[id]||'image/*');
+    return;
+  }
+  if(runtimeVideoUrls[id]){
+    showMediaPreview(
+      id,
+      runtimeVideoUrls[id],
+      runtimeMediaTypes[id]||'video/mp4',
+      '',
+      convertedMediaIds.has(id)
+    );
+    return;
+  }
+  if(runtimeMediaUrls[id]){
+    showMediaPreview(id,runtimeMediaUrls[id],runtimeMediaTypes[id]||'application/octet-stream');
+    return;
+  }
+
+  const external=portableExternalMedia[id];
+  if(external?.path){
+    runtimeMediaTypes[id]=external.type||inferMediaType(external.name);
+    showMediaPreview(
+      id,
+      external.path,
+      external.type||inferMediaType(external.name),
+      external.name||'media',
+      /_REXO\.mp4$/i.test(external.name||'')
+    );
+    return;
+  }
+
+  const record=await getMedia(id).catch(()=>null);
+  const preview=document.getElementById('preview_'+id);
+  if(!preview)return;
+  if(!record){
+    setMediaLayoutMode(id,'');
+    preview.style.display='none';
+    return;
+  }
+
+  const mime=inferMediaType(record.name,record.type);
+  runtimeMediaTypes[id]=mime;
+
+  try{
+    if(mime.startsWith('image/')){
+      const dataUrl=await fileToDataURL(record.blob);
+      runtimeMediaData[id]=dataUrl;
+      showMediaPreview(id,dataUrl,mime,record.name);
+    }else{
+      const file=new File([record.blob],record.name||'video',{type:mime});
+      runtimeSourceFiles[id]=file;
+      const url=URL.createObjectURL(file);
+      runtimeVideoUrls[id]=url;
+      const wasConverted=mime==='video/mp4'&&/_REXO\.mp4$/i.test(record.name||'');
+      if(wasConverted)convertedMediaIds.add(id);
+      showMediaPreview(id,url,mime,record.name,wasConverted);
+    }
+  }catch(err){
+    preview.style.display='none';
+  }
+}
+function playMediaVideo(id){
+  const video=document.getElementById('video_'+id);
+  if(!video){
+    convertAndPlay(id);
+    return;
+  }
+  video.muted=false;
+  video.play().catch(()=>convertAndPlay(id));
+}
+function openMediaFull(id){
+  const src=mediaSourceFor(id);
+  if(!src){
+    alert('لا يوجد ملف معروض');
+    return;
+  }
+  try{
+    const w=window.open(src,'_blank');
+    if(!w)alert('اسمح بالنوافذ المنبثقة لفتح الملف كاملًا');
+  }catch(e){
+    alert('تعذر فتح الملف في نافذة جديدة');
+  }
+}
+function downloadMedia(id){
+  const src=mediaSourceFor(id);
+  if(!src){
+    alert('لا يوجد ملف للتنزيل');
+    return;
+  }
+  const a=document.createElement('a');
+  a.href=src;
+  a.download=runtimeSourceFiles[id]?.name||'REXO-media';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+async function removeMedia(id){
+  if(!requireEdit())return;
+  try{await deleteMedia(id)}catch(e){}
+  if(runtimeMediaUrls[id]){
+    URL.revokeObjectURL(runtimeMediaUrls[id]);
+    delete runtimeMediaUrls[id];
+    delete runtimeMediaTypes[id];
+    delete runtimeMediaData[id];
+    if(runtimeVideoUrls[id]){try{URL.revokeObjectURL(runtimeVideoUrls[id])}catch(e){} delete runtimeVideoUrls[id];}
+  }
+  setMediaLayoutMode(id,'');
+  const preview=document.getElementById('preview_'+id);
+  const media=document.getElementById('media_'+id);
+  if(media)media.innerHTML='';
+  if(preview)preview.style.display='none';
+  delete runtimeSourceFiles[id];
+  convertedMediaIds.delete(id);
+  convertingMediaIds.delete(id);
+  toast('تم حذف الوسائط');
+}
+let portableProgressFailsafe=null;
+function setPortableProgress(open,title='',text='',percent=0){
+  const overlay=document.getElementById('portableProgress');
+  const titleEl=document.getElementById('portableProgressTitle');
+  const textEl=document.getElementById('portableProgressText');
+  const bar=document.getElementById('portableProgressBar');
+  if(!overlay)return;
+
+  if(portableProgressFailsafe){
+    clearTimeout(portableProgressFailsafe);
+    portableProgressFailsafe=null;
+  }
+
+  overlay.classList.toggle('open',Boolean(open));
+  if(titleEl&&title)titleEl.textContent=title;
+  if(textEl&&text)textEl.textContent=text;
+  if(bar)bar.style.width=Math.max(0,Math.min(100,Number(percent)||0))+'%';
+
+  if(open){
+    portableProgressFailsafe=setTimeout(()=>{
+      overlay.classList.remove('open');
+      if(bar)bar.style.width='0%';
+      portableProgressFailsafe=null;
+    },15*60*1000);
+  }
+}
+function portableFileName(name){
+  return String(name||'REXO')
+    .replace(/[^\w\u0600-\u06FF-]+/g,'_')
+    .replace(/^_+|_+$/g,'')
+    .slice(0,80)||'REXO';
+}
+function localPackageServerAvailable(){
+  return location.protocol==='http:' &&
+    (location.hostname==='localhost'||location.hostname==='127.0.0.1');
+}
+async function readJsonResponse(response){
+  const text=await response.text();
+  if(!response.ok)throw new Error(text||('HTTP '+response.status));
+  try{return JSON.parse(text)}catch(e){throw new Error('استجابة الخادم غير صالحة')}
+}
+function uploadPortableMedia(token,record,index,total){
+  return new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST','/api/portable/media');
+    xhr.setRequestHeader('X-Export-Token',token);
+    xhr.setRequestHeader('X-Product-Id',record.id);
+    xhr.setRequestHeader('X-File-Name',encodeURIComponent(record.name||'media'));
+    xhr.setRequestHeader('X-File-Type',record.type||record.blob.type||'application/octet-stream');
+    xhr.setRequestHeader('X-File-Extension',fileExtension(record.name,record.type||record.blob.type));
+
+    xhr.upload.onprogress=event=>{
+      const fraction=event.lengthComputable&&event.total>0?event.loaded/event.total:0.2;
+      const percent=15+(((index+fraction)/Math.max(1,total))*68);
+      setPortableProgress(
+        true,
+        'جاري نسخ الوسائط',
+        `الملف ${index+1} من ${total}: ${record.name||'وسائط'}`,
+        percent
+      );
+    };
+    xhr.onload=()=>{
+      if(xhr.status>=200&&xhr.status<300)resolve();
+      else reject(new Error(xhr.responseText||('فشل رفع الوسائط: '+xhr.status)));
+    };
+    xhr.onerror=()=>reject(new Error('انقطع الاتصال بخدمة إنشاء الحزمة'));
+    xhr.send(record.blob);
+  });
+}
+const ZIP_CRC_TABLE=(()=>{
+  const table=new Uint32Array(256);
+  for(let n=0;n<256;n++){
+    let c=n;
+    for(let k=0;k<8;k++){
+      c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);
+    }
+    table[n]=c>>>0;
+  }
+  return table;
+})();
+function zipWrite16(view,offset,value){
+  view.setUint16(offset,value&0xFFFF,true);
+}
+function zipWrite32(view,offset,value){
+  view.setUint32(offset,value>>>0,true);
+}
+function zipDosDateTime(date=new Date()){
+  const year=Math.max(1980,date.getFullYear());
+  return {
+    time:((date.getHours()&31)<<11)|((date.getMinutes()&63)<<5)|((Math.floor(date.getSeconds()/2))&31),
+    date:(((year-1980)&127)<<9)|(((date.getMonth()+1)&15)<<5)|(date.getDate()&31)
+  };
+}
+async function zipBlobCRC32(blob,onProgress=null){
+  let crc=0xFFFFFFFF;
+  const chunkSize=4*1024*1024;
+  for(let offset=0;offset<blob.size;offset+=chunkSize){
+    const bytes=new Uint8Array(
+      await blob.slice(offset,Math.min(blob.size,offset+chunkSize)).arrayBuffer()
+    );
+    for(let index=0;index<bytes.length;index++){
+      crc=ZIP_CRC_TABLE[(crc^bytes[index])&0xFF]^(crc>>>8);
+    }
+    if(onProgress)onProgress(Math.min(blob.size,offset+bytes.length),blob.size);
+  }
+  return (crc^0xFFFFFFFF)>>>0;
+}
+function zipLocalHeader(nameBytes,crc,size,dos){
+  const bytes=new Uint8Array(30+nameBytes.length);
+  const view=new DataView(bytes.buffer);
+  zipWrite32(view,0,0x04034B50);
+  zipWrite16(view,4,20);
+  zipWrite16(view,6,0x0800);
+  zipWrite16(view,8,0);
+  zipWrite16(view,10,dos.time);
+  zipWrite16(view,12,dos.date);
+  zipWrite32(view,14,crc);
+  zipWrite32(view,18,size);
+  zipWrite32(view,22,size);
+  zipWrite16(view,26,nameBytes.length);
+  zipWrite16(view,28,0);
+  bytes.set(nameBytes,30);
+  return bytes;
+}
+function zipCentralHeader(nameBytes,crc,size,dos,offset){
+  const bytes=new Uint8Array(46+nameBytes.length);
+  const view=new DataView(bytes.buffer);
+  zipWrite32(view,0,0x02014B50);
+  zipWrite16(view,4,20);
+  zipWrite16(view,6,20);
+  zipWrite16(view,8,0x0800);
+  zipWrite16(view,10,0);
+  zipWrite16(view,12,dos.time);
+  zipWrite16(view,14,dos.date);
+  zipWrite32(view,16,crc);
+  zipWrite32(view,20,size);
+  zipWrite32(view,24,size);
+  zipWrite16(view,28,nameBytes.length);
+  zipWrite16(view,30,0);
+  zipWrite16(view,32,0);
+  zipWrite16(view,34,0);
+  zipWrite16(view,36,0);
+  zipWrite32(view,38,0);
+  zipWrite32(view,42,offset);
+  bytes.set(nameBytes,46);
+  return bytes;
+}
+function zipEndRecord(entryCount,centralSize,centralOffset){
+  const bytes=new Uint8Array(22);
+  const view=new DataView(bytes.buffer);
+  zipWrite32(view,0,0x06054B50);
+  zipWrite16(view,4,0);
+  zipWrite16(view,6,0);
+  zipWrite16(view,8,entryCount);
+  zipWrite16(view,10,entryCount);
+  zipWrite32(view,12,centralSize);
+  zipWrite32(view,16,centralOffset);
+  zipWrite16(view,20,0);
+  return bytes;
+}
+async function buildBrowserZip(entries,onProgress=null){
+  if(entries.length>65535)throw new Error('عدد الملفات أكبر من الحد المدعوم');
+  const encoder=new TextEncoder();
+  const localParts=[];
+  const centralParts=[];
+  let offset=0;
+  let totalBytes=entries.reduce((sum,entry)=>sum+(entry.blob?.size||0),0);
+  let completedBytes=0;
+
+  for(let index=0;index<entries.length;index++){
+    const entry=entries[index];
+    const blob=entry.blob instanceof Blob?entry.blob:new Blob([entry.blob]);
+    if(blob.size>0xFFFFFFFF){
+      throw new Error('يوجد ملف أكبر من 4 GB ولا يمكن وضعه في ZIP من المتصفح');
+    }
+
+    const nameBytes=encoder.encode(String(entry.name).replace(/^\/+/,''));
+    const dos=zipDosDateTime(entry.date||new Date());
+    const before=completedBytes;
+    const crc=await zipBlobCRC32(blob,(loaded)=>{
+      if(onProgress){
+        const overall=totalBytes>0?(before+loaded)/totalBytes:1;
+        onProgress(overall,index,entries.length,entry.name);
+      }
+    });
+
+    const local=zipLocalHeader(nameBytes,crc,blob.size,dos);
+    const central=zipCentralHeader(nameBytes,crc,blob.size,dos,offset);
+    localParts.push(local,blob);
+    centralParts.push(central);
+    offset+=local.byteLength+blob.size;
+    completedBytes+=blob.size;
+
+    if(offset>0xFFFFFFFF){
+      throw new Error('حجم الحزمة أكبر من الحد المدعوم داخل المتصفح');
+    }
+  }
+
+  const centralOffset=offset;
+  const centralSize=centralParts.reduce((sum,part)=>sum+part.byteLength,0);
+  const end=zipEndRecord(entries.length,centralSize,centralOffset);
+  return new Blob([...localParts,...centralParts,end],{type:'application/zip'});
+}
+async function getCurrentAppSourceForZip(){
+  let source='';
+
+  // Do not try to fetch file:// URLs because some browsers wait indefinitely.
+  if(location.protocol==='http:'||location.protocol==='https:'){
+    try{
+      const response=await fetch(location.href.split('#')[0],{cache:'no-store'});
+      if(response.ok)source=await response.text();
+    }catch(e){}
+  }
+
+  if(!source){
+    source='<!doctype html>\n'+document.documentElement.outerHTML;
+  }
+  return sanitizePortableHtmlSource(source);
+}
+function removeEmbeddedPortableData(source){
+  return String(source).replace(
+    /<script[^>]*id=["']rexo-portable-data["'][^>]*>[\s\S]*?<\/script>/i,
+    ''
+  );
+}
+function sanitizePortableHtmlSource(source){
+  let clean=removeEmbeddedPortableData(String(source||''));
+
+  // The live DOM may contain progress/modals in their open state.
+  clean=clean.replace(
+    /(<div[^>]*class=["'][^"']*\bportable-progress\b[^"']*["'][^>]*id=["']portableProgress["'][^>]*)(>)/i,
+    (match,start,end)=>{
+      const normalized=start
+        .replace(/\sopen(?=[\s"'])/gi,'')
+        .replace(/class=["']([^"']*)["']/i,(m,classes)=>{
+          const fixed=classes.split(/\s+/).filter(name=>name&&name!=='open').join(' ');
+          return `class="${fixed}"`;
+        });
+      return normalized+end;
+    }
+  );
+
+  clean=clean.replace(
+    /(<div[^>]*id=["']reportModal["'][^>]*class=["'][^"']*)\bopen\b([^"']*["'][^>]*>)/i,
+    '$1$2'
+  );
+
+  clean=clean.replace(
+    /(<span[^>]*id=["']portableProgressBar["'][^>]*style=["'][^"']*width\s*:\s*)[^;"']+/i,
+    '$10%'
+  );
+
+  // Remove transient toast text/classes captured from the current page.
+  clean=clean.replace(
+    /(<div[^>]*id=["']toast["'][^>]*class=["'][^"']*)\bshow\b([^"']*["'][^>]*>)[\s\S]*?(<\/div>)/i,
+    '$1$2$3'
+  );
+
+  return clean;
+}
+async function collectPortableRecords(){
+  const productIds=[...new Set(
+    workspace.reports.flatMap(report=>report.products.map(product=>product.id))
+  )];
+  const records=[];
+  for(const id of productIds){
+    const record=await getMedia(id).catch(()=>null);
+    if(record?.blob){
+      const extension=fileExtension(record.name,record.type||record.blob.type);
+      records.push({
+        id,
+        blob:record.blob,
+        name:record.name||('media.'+extension),
+        type:record.type||record.blob.type||'application/octet-stream',
+        path:'media/'+id+'.'+extension
+      });
+    }
+  }
+  return records;
+}
+function viewerSafeId(value,index=0){
+  const clean=String(value||('report_'+index)).replace(/[^a-zA-Z0-9_-]/g,'_');
+  return clean||('report_'+index);
+}
+function viewerReportFile(report,index=0){
+  return 'reports/'+viewerSafeId(report?.id,index)+'.html';
+}
+function viewerAmount(report,usd,targetCurrency=null){
+  const currency=targetCurrency||report.currency||'SAR';
+  const value=Number(usd)||0;
+  return currency==='SAR'?value*(Number(report.rate)||3.75):value;
+}
+function viewerRoas(spendUsd,salesValueUsd){
+  const spend=Number(spendUsd)||0;
+  return spend>0?(Number(salesValueUsd)||0)/spend:0;
+}
+function viewerPercent(value,total,fallback=100){
+  const number=Math.max(0,Number(value)||0);
+  const denominator=Number(total)||0;
+  if(denominator>0)return Math.min(100,(number/denominator)*100);
+  if(number<=0)return 0;
+  return Math.min(100,(Math.log10(number+1)/Math.log10(Math.max(2,fallback)+1))*100);
+}
+function viewerGaugeColor(percent){
+  if(percent<35)return '#fb7185';
+  if(percent<70)return '#fbbf24';
+  return '#34d399';
+}
+function viewerGauge(label,value,unit,percent,decimals=0){
+  const safePercent=Math.max(0,Math.min(100,Number(percent)||0));
+  const color=viewerGaugeColor(safePercent);
+  return `<div class="viewer-gauge-card">
+    <div class="viewer-gauge" style="--p:${safePercent};--g:${color}">
+      <div class="viewer-gauge-inner">
+        <small>${escapeHtml(label)}</small>
+        <strong>${fmt(value,decimals)}</strong>
+        <span>${escapeHtml(unit)}</span>
+      </div>
+    </div>
+    <div class="viewer-gauge-percent">${fmt(safePercent,1)}%</div>
+  </div>`;
+}
+function viewerCss(){
+  return `:root{
+    --bg:#06111f;--panel:#101f35;--panel2:#142944;--line:#28415f;
+    --text:#f7fbff;--muted:#91b7da;--cyan:#22d3ee;--purple:#8b5cf6;
+    --green:#34d399;--red:#fb7185;--amber:#fbbf24;--track:#263b54;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(circle at 90% 0,rgba(139,92,246,.18),transparent 30%),
+      radial-gradient(circle at 0 15%,rgba(34,211,238,.12),transparent 28%),
+      var(--bg);
+    color:var(--text);font-family:Tahoma,Arial,sans-serif;direction:rtl;
+    min-height:100vh
+  }
+  a{color:inherit;text-decoration:none}
+  .viewer-wrap{width:min(1440px,calc(100% - 28px));margin:auto;padding:18px 0 34px}
+  .viewer-header{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:13px 0 18px
+  }
+  .viewer-brand{display:flex;align-items:center;gap:12px}
+  .viewer-logo{
+    min-width:94px;height:70px;border-radius:22px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--purple),var(--cyan));font-size:24px;
+    font-weight:900;box-shadow:0 16px 38px rgba(139,92,246,.25)
+  }
+  .viewer-title h1{margin:0;font-size:28px}
+  .viewer-title p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
+  .viewer-nav{display:flex;gap:8px;flex-wrap:wrap}
+  .viewer-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:10px 14px;border:1px solid var(--line);border-radius:12px;
+    background:rgba(255,255,255,.035);font-weight:800;font-size:12px
+  }
+  .viewer-btn.primary{background:linear-gradient(135deg,var(--purple),var(--cyan));border:0}
+  .viewer-btn:hover{transform:translateY(-1px)}
+  .viewer-hero{
+    padding:23px;border:1px solid var(--line);border-radius:25px;
+    background:linear-gradient(145deg,var(--panel2),var(--panel));
+    box-shadow:0 20px 55px rgba(0,0,0,.24);margin-bottom:16px
+  }
+  .viewer-hero h2{margin:0;font-size:28px}
+  .viewer-hero p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.9}
+  .viewer-stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0
+  }
+  .viewer-stat{
+    border:1px solid var(--line);border-radius:18px;padding:15px;
+    background:linear-gradient(145deg,var(--panel2),var(--panel))
+  }
+  .viewer-stat small{display:block;color:var(--muted);font-size:10px}
+  .viewer-stat strong{
+    display:block;margin-top:8px;font-size:22px;direction:ltr;text-align:right;
+    font-variant-numeric:tabular-nums
+  }
+  .viewer-section-title{display:flex;justify-content:space-between;gap:12px;align-items:end;margin:22px 0 12px}
+  .viewer-section-title h2{margin:0;font-size:24px}
+  .viewer-section-title p{margin:4px 0 0;color:var(--muted);font-size:11px}
+  .viewer-reports{display:grid;grid-template-columns:repeat(3,minmax(270px,1fr));gap:14px}
+  .viewer-report-card{
+    display:block;border:1px solid var(--line);border-radius:22px;padding:17px;
+    background:linear-gradient(145deg,var(--panel2),var(--panel));
+    box-shadow:0 14px 35px rgba(0,0,0,.16);transition:.18s ease;
+    position:relative;overflow:hidden
+  }
+  .viewer-report-card::before{
+    content:"";position:absolute;right:0;top:0;bottom:0;width:4px;
+    background:linear-gradient(var(--purple),var(--cyan))
+  }
+  .viewer-report-card:hover{transform:translateY(-3px);border-color:rgba(34,211,238,.55)}
+  .viewer-card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .viewer-card-top h3{margin:0;font-size:18px}
+  .viewer-period{color:var(--muted);font-size:10px;margin-top:6px}
+  .viewer-badge{
+    padding:5px 9px;border-radius:99px;border:1px solid rgba(34,211,238,.28);
+    color:var(--cyan);font-size:9px;white-space:nowrap
+  }
+  .viewer-card-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+  .viewer-card-kpi{border:1px solid var(--line);border-radius:12px;padding:9px;background:rgba(255,255,255,.025)}
+  .viewer-card-kpi small{display:block;color:var(--muted);font-size:9px}
+  .viewer-card-kpi strong{display:block;margin-top:5px;direction:ltr;text-align:right;font-size:15px}
+  .viewer-open{
+    margin-top:13px;border-top:1px solid var(--line);padding-top:11px;
+    color:var(--cyan);font-weight:900;font-size:11px
+  }
+  .viewer-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:16px}
+  .viewer-summary .viewer-stat strong{font-size:20px}
+  .viewer-product{
+    border:1px solid var(--line);border-radius:24px;background:var(--panel);
+    box-shadow:0 15px 40px rgba(0,0,0,.17);padding:17px;margin-bottom:16px
+  }
+  .viewer-product-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
+  .viewer-product-head h2{margin:0;font-size:21px}
+  .viewer-product-head p{margin:6px 0 0;color:var(--muted);font-size:11px}
+  .viewer-product-grid{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(500px,1.4fr);gap:15px}
+  .viewer-media{
+    min-height:390px;border:1px solid var(--line);border-radius:19px;
+    background:#050a11;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;position:relative
+  }
+  .viewer-media video{
+    display:block;width:100%;height:100%;max-height:620px;object-fit:contain
+  }
+  .viewer-media.viewer-image-media{
+    min-height:0;
+    height:auto;
+    display:block;
+    overflow:visible;
+  }
+  .viewer-media.viewer-image-media img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width:100%;
+    max-height:none;
+    object-fit:contain;
+    object-position:center;
+    margin:0 auto;
+  }
+  .viewer-media-empty{color:var(--muted);font-size:12px;text-align:center;padding:25px}
+  .viewer-media-link{
+    position:absolute;bottom:10px;left:10px;padding:7px 10px;border-radius:10px;
+    background:rgba(5,12,25,.78);border:1px solid var(--line);font-size:10px
+  }
+  .viewer-gauges{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+  .viewer-gauge-card{
+    border:1px solid var(--line);border-radius:18px;padding:13px;
+    background:linear-gradient(145deg,var(--panel2),var(--panel));text-align:center
+  }
+  .viewer-gauge{
+    --p:0;--g:var(--cyan);width:150px;height:150px;border-radius:50%;
+    margin:auto;display:grid;place-items:center;
+    background:conic-gradient(var(--g) calc(var(--p)*1%),var(--track) 0)
+  }
+  .viewer-gauge::before{
+    content:"";position:absolute;width:122px;height:122px;border-radius:50%;
+    background:var(--panel);border:1px solid var(--line)
+  }
+  .viewer-gauge{position:relative}
+  .viewer-gauge-inner{position:relative;z-index:1;width:108px}
+  .viewer-gauge-inner small{display:block;color:var(--muted);font-size:10px}
+  .viewer-gauge-inner strong{display:block;margin-top:7px;font-size:20px;direction:ltr}
+  .viewer-gauge-inner span{display:block;margin-top:4px;color:var(--muted);font-size:9px}
+  .viewer-gauge-percent{margin-top:8px;color:var(--muted);font-size:10px}
+  .viewer-notes{
+    margin-top:13px;padding:13px;border:1px solid var(--line);border-radius:14px;
+    color:var(--muted);font-size:11px;line-height:1.8;white-space:pre-wrap
+  }
+  .viewer-compare-controls{
+    display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:16px
+  }
+  .viewer-compare-controls select{
+    min-width:230px;padding:11px;border-radius:12px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--text);font:inherit
+  }
+  .viewer-compare-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+  .viewer-compare-card{
+    border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--panel)
+  }
+  .viewer-compare-card>small{color:var(--muted);font-size:10px}
+  .viewer-pair{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
+  .viewer-pair div{border:1px solid var(--line);border-radius:11px;padding:9px;background:rgba(255,255,255,.025)}
+  .viewer-pair small{display:block;color:var(--muted);font-size:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .viewer-pair strong{display:block;margin-top:5px;direction:ltr;font-size:14px}
+  .viewer-delta{margin-top:10px;text-align:center;font-size:10px;direction:ltr;color:var(--muted)}
+  .viewer-delta.pos{color:var(--green)}.viewer-delta.neg{color:var(--red)}
+  .viewer-footer{text-align:center;color:var(--muted);font-size:10px;margin-top:24px;padding:15px}
+  @media(max-width:1100px){
+    .viewer-reports{grid-template-columns:repeat(2,1fr)}
+    .viewer-summary{grid-template-columns:repeat(3,1fr)}
+    .viewer-compare-grid{grid-template-columns:repeat(2,1fr)}
+    .viewer-product-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:680px){
+    .viewer-wrap{width:min(100% - 18px,1440px)}
+    .viewer-header{align-items:flex-start;flex-direction:column}
+    .viewer-reports,.viewer-stats,.viewer-summary,.viewer-compare-grid{grid-template-columns:1fr}
+    .viewer-card-kpis,.viewer-gauges{grid-template-columns:1fr}
+    .viewer-media{min-height:260px}
+    .viewer-media.viewer-image-media{min-height:0}
+    .viewer-title h1,.viewer-hero h2{font-size:23px}
+    .viewer-compare-controls select{width:100%;min-width:0}
+  }
+  @media print{
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+    body{background:var(--bg)!important}
+    .viewer-nav,.viewer-media-link{display:none!important}
+    .viewer-product{break-inside:avoid}
+  }`;
+}
+function viewerShell({title,subtitle,nav,content,script='',root=''}) {
+  return `<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(title)} — REXO</title>
+<style>${viewerCss()}</style>
+</head>
+<body>
+<div class="viewer-wrap">
+  <header class="viewer-header">
+    <div class="viewer-brand">
+      <div class="viewer-logo">REXO</div>
+      <div class="viewer-title">
+        <h1>${escapeHtml(title)}</h1>
+        <p>${escapeHtml(subtitle||'نسخة تصفح فقط')}</p>
+      </div>
+    </div>
+    <nav class="viewer-nav">${nav||''}</nav>
+  </header>
+  ${content}
+  <footer class="viewer-footer">REXO • نسخة تصفح فقط • لا توجد أدوات تعديل</footer>
+</div>
+${script?`<script>${script}<\/script>`:''}
+</body>
+</html>`;
+}
+function viewerHomePage(reports){
+  const totalSpendSar=reports.reduce(
+    (sum,report)=>sum+viewerAmount(report,report.campaign?.spendUsd,'SAR'),0
+  );
+  const totalSales=reports.reduce(
+    (sum,report)=>sum+(Number(report.campaign?.salesCount)||0),0
+  );
+  const latest=Math.max(...reports.map(report=>Number(report.updatedAt)||0),0);
+
+  const cards=reports.map((report,index)=>{
+    const currency=report.currency||'SAR';
+    const spend=viewerAmount(report,report.campaign?.spendUsd,currency);
+    const value=viewerAmount(report,report.campaign?.salesValueUsd,currency);
+    const roas=viewerRoas(report.campaign?.spendUsd,report.campaign?.salesValueUsd);
+    return `<a class="viewer-report-card" href="${viewerReportFile(report,index)}">
+      <div class="viewer-card-top">
+        <div>
+          <h3>${escapeHtml(report.name)}</h3>
+          <div class="viewer-period">${escapeHtml(periodLabel(report))}</div>
+        </div>
+        <span class="viewer-badge">${fmt(report.products?.length||0,0)} منتجات</span>
+      </div>
+      <div class="viewer-card-kpis">
+        <div class="viewer-card-kpi"><small>المنفق</small><strong>${fmt(spend,2)} ${currency}</strong></div>
+        <div class="viewer-card-kpi"><small>المبيعات</small><strong>${fmt(report.campaign?.salesCount,0)}</strong></div>
+        <div class="viewer-card-kpi"><small>ROAS</small><strong>${fmt(roas,2)}</strong></div>
+        <div class="viewer-card-kpi"><small>قيمة المبيعات</small><strong>${fmt(value,2)} ${currency}</strong></div>
+      </div>
+      <div class="viewer-open">فتح التقرير ←</div>
+    </a>`;
+  }).join('');
+
+  const content=`<section class="viewer-hero">
+    <h2>جميع التقارير</h2>
+    <p>هذه نسخة تصفح ثابتة. اضغط على أي تقرير لفتحه في صفحة مستقلة، أو افتح صفحة المقارنة.</p>
+  </section>
+  <section class="viewer-stats">
+    <div class="viewer-stat"><small>عدد التقارير</small><strong>${fmt(reports.length,0)}</strong></div>
+    <div class="viewer-stat"><small>إجمالي المبلغ المنفق</small><strong>${fmt(totalSpendSar,2)} SAR</strong></div>
+    <div class="viewer-stat"><small>إجمالي المبيعات</small><strong>${fmt(totalSales,0)}</strong></div>
+    <div class="viewer-stat"><small>آخر تحديث</small><strong style="font-size:14px">${latest?formatDateTime(latest):'—'}</strong></div>
+  </section>
+  <div class="viewer-section-title">
+    <div><h2>التقارير المحفوظة</h2><p>كل بطاقة رابط HTML عادي لا يعتمد على JavaScript.</p></div>
+  </div>
+  <section class="viewer-reports">${cards||'<div class="viewer-stat">لا توجد تقارير.</div>'}</section>`;
+
+  return viewerShell({
+    title:'التقارير الشهرية',
+    subtitle:'نسخة تصفح فقط — صفحات مستقلة',
+    nav:'<a class="viewer-btn primary" href="comparison.html">فتح المقارنة</a>',
+    content
+  });
+}
+function viewerMediaHtml(product,mediaMap){
+  const record=mediaMap.get(product.id);
+  if(!record){
+    return '<div class="viewer-media"><div class="viewer-media-empty">لا توجد صورة أو فيديو لهذا المنتج</div></div>';
+  }
+  const src='../'+record.path;
+  const type=String(record.type||'');
+  if(type.startsWith('image/')){
+    return `<div class="viewer-media viewer-image-media">
+      <img src="${escapeHtml(src)}" alt="${escapeHtml(product.name)}">
+      <a class="viewer-media-link" href="${escapeHtml(src)}" target="_blank">فتح الصورة</a>
+    </div>`;
+  }
+  if(type.startsWith('video/')){
+    return `<div class="viewer-media">
+      <video controls playsinline preload="metadata" src="${escapeHtml(src)}"></video>
+      <a class="viewer-media-link" href="${escapeHtml(src)}" target="_blank">فتح الفيديو</a>
+    </div>`;
+  }
+  return `<div class="viewer-media">
+    <div class="viewer-media-empty"><a class="viewer-btn" href="${escapeHtml(src)}" target="_blank">فتح الملف</a></div>
+  </div>`;
+}
+function viewerProductHtml(report,product,index,mediaMap){
+  const currency=report.currency||'SAR';
+  const spend=viewerAmount(report,product.spendUsd,currency);
+  const salesValue=viewerAmount(report,product.salesValueUsd,currency);
+  const roas=viewerRoas(product.spendUsd,product.salesValueUsd);
+
+  const spendPct=viewerPercent(product.spendUsd,report.campaign?.spendUsd,1000);
+  const salesPct=viewerPercent(product.salesCount,report.campaign?.salesCount,100);
+  const clicksPct=viewerPercent(product.clicks,report.campaign?.clicks,1000);
+  const roasPct=Math.min(100,(roas/5)*100);
+  const valuePct=viewerPercent(product.salesValueUsd,report.campaign?.salesValueUsd,5000);
+
+  return `<article class="viewer-product">
+    <div class="viewer-product-head">
+      <div>
+        <h2>${escapeHtml(product.name||('المنتج '+(index+1)))}</h2>
+        <p>${escapeHtml(product.campaign||'')}</p>
+      </div>
+      <span class="viewer-badge">منتج ${fmt(index+1,0)}</span>
+    </div>
+    <div class="viewer-product-grid">
+      ${viewerMediaHtml(product,mediaMap)}
+      <div>
+        <div class="viewer-gauges">
+          ${viewerGauge('المبلغ المنفق',spend,currency,spendPct,2)}
+          ${viewerGauge('عدد المبيعات',product.salesCount,'Sales',salesPct,0)}
+          ${viewerGauge('النقرات',product.clicks,'Clicks',clicksPct,0)}
+          ${viewerGauge('ROAS',roas,'ROAS',roasPct,2)}
+          ${viewerGauge('قيمة المبيعات',salesValue,currency,valuePct,2)}
+        </div>
+        ${product.notes?`<div class="viewer-notes">${escapeHtml(product.notes)}</div>`:''}
+      </div>
+    </div>
+  </article>`;
+}
+function viewerReportPage(report,index,mediaMap){
+  const currency=report.currency||'SAR';
+  const spend=viewerAmount(report,report.campaign?.spendUsd,currency);
+  const salesValue=viewerAmount(report,report.campaign?.salesValueUsd,currency);
+  const roas=viewerRoas(report.campaign?.spendUsd,report.campaign?.salesValueUsd);
+
+  const summary=`<section class="viewer-hero">
+    <h2>${escapeHtml(report.name)}</h2>
+    <p>${escapeHtml(periodLabel(report))}</p>
+  </section>
+  <section class="viewer-summary">
+    <div class="viewer-stat"><small>المبلغ المنفق</small><strong>${fmt(spend,2)} ${currency}</strong></div>
+    <div class="viewer-stat"><small>عدد المبيعات</small><strong>${fmt(report.campaign?.salesCount,0)}</strong></div>
+    <div class="viewer-stat"><small>النقرات</small><strong>${fmt(report.campaign?.clicks,0)}</strong></div>
+    <div class="viewer-stat"><small>ROAS</small><strong>${fmt(roas,2)}</strong></div>
+    <div class="viewer-stat"><small>قيمة المبيعات</small><strong>${fmt(salesValue,2)} ${currency}</strong></div>
+  </section>
+  <div class="viewer-section-title">
+    <div><h2>المنتجات</h2><p>${fmt(report.products?.length||0,0)} منتجات داخل التقرير</p></div>
+  </div>
+  ${(report.products||[]).map((product,productIndex)=>
+    viewerProductHtml(report,product,productIndex,mediaMap)
+  ).join('')}`;
+
+  return viewerShell({
+    title:report.name,
+    subtitle:periodLabel(report),
+    nav:`<a class="viewer-btn" href="../index.html">الرئيسية</a>
+         <a class="viewer-btn primary" href="../comparison.html">المقارنة</a>
+         <button class="viewer-btn" onclick="window.print()">حفظ PDF</button>`,
+    content:summary
+  });
+}
+function viewerComparisonPage(reports){
+  const safeReports=JSON.stringify(reports).replace(/</g,'\\u003c');
+  const options=reports.map((report,index)=>
+    `<option value="${index}">${escapeHtml(report.name)} — ${escapeHtml(periodLabel(report))}</option>`
+  ).join('');
+
+  const content=`<section class="viewer-hero">
+    <h2>مقارنة التقارير</h2>
+    <p>اختر أي تقريرين للمقارنة. هذه الصفحة للقراءة فقط.</p>
+  </section>
+  <div class="viewer-compare-controls">
+    <select id="compareA">${options}</select>
+    <select id="compareB">${options}</select>
+    <select id="compareCurrency"><option value="SAR">SAR</option><option value="USD">USD</option></select>
+  </div>
+  <section class="viewer-compare-grid" id="compareResult"></section>`;
+
+  const script=`const reports=${safeReports};
+  const numberFormat=(value,decimals=0)=>new Intl.NumberFormat('en-US',{
+    minimumFractionDigits:decimals,maximumFractionDigits:decimals
+  }).format(Number(value)||0);
+  const amount=(report,usd,currency)=>currency==='SAR'
+    ?(Number(usd)||0)*(Number(report.rate)||3.75)
+    :(Number(usd)||0);
+  const roas=report=>{
+    const spend=Number(report.campaign?.spendUsd)||0;
+    return spend>0?(Number(report.campaign?.salesValueUsd)||0)/spend:0;
+  };
+  const metrics=(report,currency)=>({
+    spend:amount(report,report.campaign?.spendUsd,currency),
+    sales:Number(report.campaign?.salesCount)||0,
+    clicks:Number(report.campaign?.clicks)||0,
+    roas:roas(report),
+    value:amount(report,report.campaign?.salesValueUsd,currency)
+  });
+  function renderComparison(){
+    const aIndex=Number(document.getElementById('compareA').value)||0;
+    let bIndex=Number(document.getElementById('compareB').value)||0;
+    const currency=document.getElementById('compareCurrency').value;
+    const reportA=reports[aIndex]||reports[0];
+    const reportB=reports[bIndex]||reports[0];
+    if(!reportA||!reportB)return;
+    const a=metrics(reportA,currency),b=metrics(reportB,currency);
+    const defs=[
+      ['spend','المبلغ المنفق',2,currency],
+      ['sales','عدد المبيعات',0,'Sales'],
+      ['clicks','النقرات',0,'Clicks'],
+      ['roas','ROAS',2,'ROAS'],
+      ['value','قيمة المبيعات',2,currency]
+    ];
+    document.getElementById('compareResult').innerHTML=defs.map(([key,label,decimals,unit])=>{
+      const av=Number(a[key])||0,bv=Number(b[key])||0,diff=bv-av;
+      const pct=av!==0?(diff/Math.abs(av))*100:null;
+      const cls=diff>0?'pos':diff<0?'neg':'';
+      const delta=(diff>0?'+':'')+numberFormat(diff,decimals)
+        +(pct===null?'':' ('+(pct>0?'+':'')+numberFormat(pct,1)+'%)');
+      return '<article class="viewer-compare-card">'
+        +'<small>'+label+'</small>'
+        +'<div class="viewer-pair">'
+        +'<div><small>'+reportA.name+'</small><strong>'+numberFormat(av,decimals)+'</strong></div>'
+        +'<div><small>'+reportB.name+'</small><strong>'+numberFormat(bv,decimals)+'</strong></div>'
+        +'</div><div class="viewer-delta '+cls+'">الفرق: '+delta+' '+unit+'</div></article>';
+    }).join('');
+  }
+  document.getElementById('compareA').addEventListener('change',renderComparison);
+  document.getElementById('compareB').addEventListener('change',renderComparison);
+  document.getElementById('compareCurrency').addEventListener('change',renderComparison);
+  if(reports.length>1)document.getElementById('compareB').value='1';
+  renderComparison();`;
+
+  return viewerShell({
+    title:'مقارنة التقارير',
+    subtitle:'اختر أي فترتين للمقارنة',
+    nav:'<a class="viewer-btn" href="index.html">الرئيسية</a><button class="viewer-btn" onclick="window.print()">حفظ PDF</button>',
+    content,
+    script
+  });
+}
+async function exportReadonlyZipDirect(){
+  try{
+    setPortableProgress(
+      true,
+      'جاري إنشاء موقع التصفح الثابت',
+      'يتم تجهيز صفحة مستقلة لكل تقرير.',
+      4
+    );
+
+    const reports=JSON.parse(JSON.stringify(workspace.reports||[]));
+    const records=await collectPortableRecords();
+    const mediaMap=new Map(records.map(record=>[record.id,record]));
+
+    const entries=[
+      {name:'index.html',blob:new Blob([viewerHomePage(reports)],{type:'text/html;charset=utf-8'})},
+      {name:'comparison.html',blob:new Blob([viewerComparisonPage(reports)],{type:'text/html;charset=utf-8'})},
+      ...reports.map((report,index)=>({
+        name:viewerReportFile(report,index),
+        blob:new Blob([viewerReportPage(report,index,mediaMap)],{type:'text/html;charset=utf-8'})
+      })),
+      {name:'ابدأ_من_هنا.txt',blob:new Blob([
+`REXO — موقع تصفح ثابت
+
+1) فك ضغط الملف كاملًا داخل مجلد واحد.
+2) افتح index.html.
+3) كل تقرير له صفحة HTML مستقلة داخل مجلد reports.
+4) يمكنك تصفح كل التقارير وفتح المقارنة وتشغيل الوسائط وحفظ PDF.
+5) لا توجد أي أدوات تعديل.
+6) لا تنقل index.html وحده؛ انقل المجلد كاملًا مع reports وmedia.
+`
+      ],{type:'text/plain;charset=utf-8'})},
+      ...records.map(record=>({name:record.path,blob:record.blob}))
+    ];
+
+    const zipBlob=await buildBrowserZip(entries,(progress,index,total,name)=>{
+      setPortableProgress(
+        true,
+        'جاري ضغط موقع التصفح',
+        `معالجة ${name||'الملفات'} • ${index+1} من ${total}`,
+        8+(progress*88)
+      );
+    });
+
+    setPortableProgress(
+      true,
+      'تم إنشاء موقع التصفح',
+      `تم إنشاء ${reports.length} صفحة تقرير و${records.length} ملف وسائط.`,
+      100
+    );
+
+    const link=document.createElement('a');
+    const downloadUrl=URL.createObjectURL(zipBlob);
+    link.href=downloadUrl;
+    link.download='REXO_Static_Viewer.zip';
+    document.body.appendChild(link);
+
+    setTimeout(()=>{
+      setPortableProgress(false);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(downloadUrl),5000);
+    },250);
+  }catch(error){
+    setPortableProgress(false);
+    alert('تعذر إنشاء موقع التصفح: '+(error?.message||error));
+  }
+}
+async function exportPortableSite(accessMode='editable'){
+  if(!requireEdit())return;
+  const unlockPinHash='';
+
+  if(accessMode==='readonly'){
+    await exportReadonlyZipDirect();
+    return;
+  }
+
+  if(!localPackageServerAvailable()){
+    alert('تصدير الحزمة الكاملة القابلة للتعديل يحتاج فتح الموقع من ملف تشغيل REXO.');
+    return;
+  }
+
+  try{
+    const modeLabel=accessMode==='readonly'?'نسخة التصفح فقط':'النسخة الكاملة';
+    setPortableProgress(
+      true,
+      'جاري تجهيز '+modeLabel,
+      'يتم إنشاء مجلد محمول للتقارير والوسائط.',
+      4
+    );
+
+    const health=await fetch('/api/health',{cache:'no-store'});
+    if(!health.ok)throw new Error('خدمة REXO المحلية غير جاهزة');
+
+    const startResponse=await fetch('/api/portable/start',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        format:'REXO_PORTABLE_PACKAGE_V3',
+        exportName:accessMode==='readonly'
+          ? 'REXO_View_Only_'+new Date().toISOString().slice(0,10)
+          : 'REXO_Editable_'+new Date().toISOString().slice(0,10),
+        accessMode,
+        unlockPinHash,
+        workspace:JSON.parse(JSON.stringify(workspace))
+      })
+    });
+    const started=await readJsonResponse(startResponse);
+    const token=started.token;
+    if(!token)throw new Error('لم يتم إنشاء رمز الحزمة');
+
+    const productIds=[...new Set(
+      workspace.reports.flatMap(report=>report.products.map(product=>product.id))
+    )];
+    const records=[];
+    for(const id of productIds){
+      const record=await getMedia(id).catch(()=>null);
+      if(record?.blob){
+        records.push({
+          id,
+          blob:record.blob,
+          name:record.name||'media',
+          type:record.type||record.blob.type||'application/octet-stream'
+        });
+      }
+    }
+
+    for(let index=0;index<records.length;index++){
+      await uploadPortableMedia(token,records[index],index,records.length);
+    }
+
+    setPortableProgress(
+      true,
+      'جاري ضغط الحزمة',
+      'يتم إنشاء ملف ZIP النهائي. لا تغلق نافذة تشغيل REXO.',
+      88
+    );
+
+    const finishResponse=await fetch('/api/portable/finish',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Export-Token':token
+      },
+      body:'{}'
+    });
+    const finished=await readJsonResponse(finishResponse);
+    if(!finished.downloadUrl)throw new Error('لم يتم إنشاء رابط تنزيل الحزمة');
+
+    setPortableProgress(
+      true,
+      'تم إنشاء الحزمة',
+      `تم تضمين ${records.length} ملف وسائط. يبدأ التنزيل الآن.`,
+      100
+    );
+
+    const link=document.createElement('a');
+    link.href=finished.downloadUrl;
+    link.download=finished.fileName||(
+      accessMode==='readonly'?'REXO_View_Only.zip':'REXO_Editable.zip'
+    );
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(()=>setPortableProgress(false),1200);
+  }catch(error){
+    setPortableProgress(false);
+    alert('تعذر إنشاء حزمة ZIP: '+(error?.message||error));
+  }
+}
+async function clearRuntimeMediaCaches(){
+  Object.keys(runtimeMediaUrls).forEach(id=>{
+    try{URL.revokeObjectURL(runtimeMediaUrls[id])}catch(e){}
+    delete runtimeMediaUrls[id];
+  });
+  Object.keys(runtimeVideoUrls).forEach(id=>{
+    try{URL.revokeObjectURL(runtimeVideoUrls[id])}catch(e){}
+    delete runtimeVideoUrls[id];
+  });
+  Object.keys(runtimeMediaData).forEach(id=>delete runtimeMediaData[id]);
+  Object.keys(runtimeSourceFiles).forEach(id=>delete runtimeSourceFiles[id]);
+  convertedMediaIds.clear();
+  convertingMediaIds.clear();
+}
+async function restoreWorkspaceObject(rawWorkspace){
+  const restoredReports=Array.isArray(rawWorkspace?.reports)
+    ? rawWorkspace.reports.map(normalizeReport)
+    : [];
+  if(!restoredReports.length)throw new Error('لا توجد تقارير داخل النسخة');
+
+  workspace={
+    theme:rawWorkspace.theme==='light'?'light':'dark',
+    activeReportId:restoredReports.some(r=>r.id===rawWorkspace.activeReportId)
+      ? rawWorkspace.activeReportId
+      : restoredReports[0].id,
+    reports:restoredReports
+  };
+  persistWorkspace();
+}
+async function bootstrapPortablePackage(){
+  if(!localPackageServerAvailable())return;
+
+  let response;
+  try{
+    response=await fetch('/portable_package.json',{cache:'no-store'});
+  }catch(e){
+    return;
+  }
+  if(!response.ok)return;
+
+  try{
+    const payload=await response.json();
+    if(!['REXO_PORTABLE_PACKAGE_V2','REXO_PORTABLE_PACKAGE_V3'].includes(payload?.format)||!payload.workspace){
+      return;
+    }
+
+    setPackageAccess(payload);
+
+    const flag='rexo_package_imported_'+payload.exportId;
+    if(localStorage.getItem(flag))return;
+
+    setPortableProgress(
+      true,
+      'فتح الحزمة لأول مرة',
+      'يتم استعادة التقارير والصور والفيديوهات من المجلد المحمول.',
+      5
+    );
+
+    await restoreWorkspaceObject(payload.workspace);
+    await clearMediaDB();
+
+    const media=Array.isArray(payload.media)?payload.media:[];
+    for(let index=0;index<media.length;index++){
+      const item=media[index];
+      setPortableProgress(
+        true,
+        'جاري استعادة الوسائط',
+        `الملف ${index+1} من ${media.length}`,
+        media.length?12+((index/media.length)*82):94
+      );
+
+      const mediaResponse=await fetch('/'+String(item.path||'').replace(/^\/+/,''));
+      if(!mediaResponse.ok)throw new Error('تعذر قراءة '+(item.name||'ملف وسائط'));
+      const blob=await mediaResponse.blob();
+      const file=new File([blob],item.name||'media',{
+        type:item.type||blob.type||'application/octet-stream'
+      });
+      await putMedia(item.id,file,item.type||blob.type);
+    }
+
+    await clearRuntimeMediaCaches();
+    localStorage.setItem(flag,'1');
+    setPortableProgress(false);
+  }catch(error){
+    setPortableProgress(false);
+    console.error('Portable package restore failed',error);
+    alert('تعذر استعادة الحزمة المحمولة: '+(error?.message||error));
+  }
+}
+/* Compatibility with older single-HTML portable backups. */
+function dataURLToBlob(dataUrl){
+  const match=String(dataUrl||'').match(/^data:([^;,]+)?(;base64)?,(.*)$/s);
+  if(!match)throw new Error('بيانات الوسائط غير صالحة');
+  const mime=match[1]||'application/octet-stream';
+  if(!match[2])return new Blob([decodeURIComponent(match[3]||'')],{type:mime});
+  const binary=atob(match[3]||'');
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return new Blob([bytes],{type:mime});
+}
+async function restorePortablePayload(payload,renderAfter=true){
+  if(!payload||payload.format!=='REXO_PORTABLE_SITE_V1'||!payload.workspace){
+    throw new Error('الملف ليس نسخة REXO محمولة صالحة');
+  }
+  await restoreWorkspaceObject(payload.workspace);
+  await clearMediaDB();
+
+  const media=Array.isArray(payload.media)?payload.media:[];
+  for(let index=0;index<media.length;index++){
+    const item=media[index];
+    setPortableProgress(
+      true,'جاري استعادة النسخة',
+      `استعادة الوسائط ${index+1} من ${media.length}`,
+      media.length?15+((index/media.length)*80):95
+    );
+    const blob=dataURLToBlob(item.dataUrl);
+    const file=new File([blob],item.name||'media',{type:item.type||blob.type});
+    await putMedia(item.id,file,item.type||blob.type);
+  }
+  await clearRuntimeMediaCaches();
+  if(renderAfter){
+    renderAll();
+    applyRoute();
+  }
+}
+function extractPortablePayloadFromText(text){
+  const trimmed=String(text||'').trim();
+  if(trimmed.startsWith('{'))return JSON.parse(trimmed);
+  const doc=new DOMParser().parseFromString(trimmed,'text/html');
+  const node=doc.getElementById('rexo-portable-data');
+  if(!node)throw new Error('لم يتم العثور على بيانات REXO داخل الملف');
+  return JSON.parse(node.textContent);
+}
+async function importPortableFile(event){
+  if(!requireEdit())return;
+  const input=event.target;
+  const file=input.files?.[0];
+  input.value='';
+  if(!file)return;
+
+  const proceed=confirm(
+    'سيتم استبدال التقارير والوسائط الموجودة حاليًا بالنسخة المستوردة. هل تريد المتابعة؟'
+  );
+  if(!proceed)return;
+
+  try{
+    setPortableProgress(true,'جاري قراءة النسخة','يتم فتح ملف النسخة القديمة.',5);
+    const payload=extractPortablePayloadFromText(await file.text());
+    await restorePortablePayload(payload,true);
+    localStorage.setItem('rexo_portable_imported_'+payload.exportId,'1');
+    setPortableProgress(true,'اكتملت الاستعادة','تم نقل التقارير والصور والفيديوهات.',100);
+    setTimeout(()=>setPortableProgress(false),850);
+    toast('تم استيراد النسخة');
+  }catch(error){
+    setPortableProgress(false);
+    alert('تعذر استيراد النسخة: '+(error?.message||error));
+  }
+}
+async function bootstrapPortableData(){
+  const node=document.getElementById('rexo-portable-data');
+  if(!node)return;
+
+  try{
+    const payload=JSON.parse(node.textContent);
+    if(!payload?.exportId)return;
+
+    setPackageAccess(payload);
+
+    if(payload.format==='REXO_PORTABLE_BROWSE_V1'){
+      Object.keys(portableExternalMedia).forEach(id=>delete portableExternalMedia[id]);
+      for(const item of Array.isArray(payload.media)?payload.media:[]){
+        portableExternalMedia[item.id]={
+          path:item.path,
+          name:item.name,
+          type:item.type,
+          size:item.size
+        };
+      }
+
+      const flag='rexo_browse_imported_'+payload.exportId;
+      if(!localStorage.getItem(flag)){
+        await restoreWorkspaceObject(payload.workspace);
+        localStorage.setItem(flag,'1');
+      }
+      return;
+    }
+
+    const flag='rexo_portable_imported_'+payload.exportId;
+    if(localStorage.getItem(flag))return;
+
+    setPortableProgress(
+      true,'فتح الموقع المحمول لأول مرة',
+      'يتم استخراج التقارير والصور والفيديوهات من الملف.',5
+    );
+    await restorePortablePayload(payload,false);
+    localStorage.setItem(flag,'1');
+    setPortableProgress(false);
+  }catch(error){
+    setPortableProgress(false);
+    console.error('Portable bootstrap failed',error);
+    alert('تعذر فتح نسخة التصفح: '+(error?.message||error));
+  }
+}
+function exportCSV(){
+  const rows=[
+    ['Record Type','Name','Campaign','Spend '+currencyName(),'Sales Count','Clicks','ROAS','Sales Value '+currencyName()],
+    ['Campaign Total','Campaign Total','',displayAmount(state.campaign.spendUsd).toFixed(2),state.campaign.salesCount,state.campaign.clicks,roasFrom(state.campaign.spendUsd,state.campaign.salesValueUsd).toFixed(2),displayAmount(state.campaign.salesValueUsd).toFixed(2)],
+    ...state.products.map(p=>['Product',p.name,p.campaign,displayAmount(p.spendUsd).toFixed(2),p.salesCount,p.clicks,roasFrom(p.spendUsd,p.salesValueUsd).toFixed(2),displayAmount(p.salesValueUsd).toFixed(2)])
+  ];
+  const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='REXO-'+currentReport().name.replace(/[^\w\u0600-\u06FF-]+/g,'_')+'.csv';a.click();URL.revokeObjectURL(a.href)
+}
+async function resetAll(){
+  if(!requireEdit())return;
+  const report=currentReport();
+  if(!confirm('تفريغ تقرير «'+report.name+'» وحذف منتجاته ووسائطه؟'))return;
+
+  await Promise.all(report.products.map(async p=>{
+    try{await deleteMedia(p.id)}catch(e){}
+    if(runtimeMediaUrls[p.id]){try{URL.revokeObjectURL(runtimeMediaUrls[p.id])}catch(e){}}
+    if(runtimeVideoUrls[p.id]){try{URL.revokeObjectURL(runtimeVideoUrls[p.id])}catch(e){}}
+    delete runtimeMediaUrls[p.id];
+    delete runtimeVideoUrls[p.id];
+    delete runtimeMediaTypes[p.id];
+    delete runtimeMediaData[p.id];
+  }));
+
+  const fresh=defaultReport(report.name,report.periodStart,report.periodEnd);
+  fresh.id=report.id;
+  fresh.createdAt=report.createdAt;
+  const index=workspace.reports.findIndex(r=>r.id===report.id);
+  workspace.reports[index]=fresh;
+  persistWorkspace();
+  renderAll();
+  toast('تم تفريغ التقرير');
+}
+function printColoredPDF(){
+  toast('في نافذة الطباعة اختر حفظ PDF وفعّل خيار Background graphics / رسومات الخلفية');
+  setTimeout(()=>window.print(),450);
+}
+function renderAll(){
+  applyTheme();
+  renderHome();
+  renderReportManager();
+  renderCampaignSummary();
+  renderProducts();
+  renderComparisonSelectors();
+  if((location.hash||'').includes('compare'))renderComparison();
+  requestAnimationFrame(applyAccessMode);
+}
+window.addEventListener('hashchange',()=>{
+  // Browser back/forward still works, while normal clicks render directly.
+  applyRoute();
+});
+window.addEventListener('keydown',event=>{
+  if(event.key==='Escape')closeReportModal();
+});
+function resetTransientUi(){
+  const progress=document.getElementById('portableProgress');
+  if(progress)progress.classList.remove('open');
+
+  const modal=document.getElementById('reportModal');
+  if(modal)modal.classList.remove('open');
+
+  const toastEl=document.getElementById('toast');
+  if(toastEl){
+    toastEl.classList.remove('show');
+    toastEl.textContent='';
+  }
+
+  const bar=document.getElementById('portableProgressBar');
+  if(bar)bar.style.width='0%';
+}
+document.addEventListener('click',event=>{
+  const card=event.target.closest?.('.month-report-card');
+  if(!card||event.target.closest('button'))return;
+  const reportId=card.dataset.reportId;
+  if(reportId)openReportPage(reportId);
+});
+async function startRexoApp(){
+  resetTransientUi();
+  await bootstrapPortablePackage();
+  await bootstrapPortableData();
+  resetTransientUi();
+
+  if(!location.hash){
+    updateRouteHash('home');
+  }
+  applyRoute();
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',startRexoApp,{once:true});
+}else{
+  startRexoApp();
+}
+</script>
+</body>
+</html>
